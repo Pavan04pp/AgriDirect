@@ -1,0 +1,6 @@
+{
+  "name": "Team Enigma — Agricultural Procurement",
+  "description": "Demand-first agricultural procurement platform connecting buyers, farmers, and logistics providers with intelligent supply aggregation, produce quality assessment, and quantity locking.",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
