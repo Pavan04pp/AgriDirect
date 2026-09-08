@@ -35,6 +35,7 @@ import {
   CartesianGrid
 } from 'recharts';
 import { MarketTrendProduct, MLCropSuggestion, DemandRequirementLevel } from '../../types';
+import { useApp } from '../../context/AppContext';
 import {
   INITIAL_MARKET_TRENDS,
   ML_CROP_SUGGESTIONS,
@@ -54,7 +55,13 @@ export const MarketTrendsModal: React.FC<MarketTrendsModalProps> = ({
   initialTab = 'trends',
   onPreBookDemand
 }) => {
-  const [activeTab, setActiveTab] = useState<'trends' | 'ml_suggestions'>(initialTab);
+  const { currentUser } = useApp();
+  const isLogistics = currentUser?.role === 'logistics';
+  const isBuyer = currentUser?.role === 'buyer';
+  const isFarmer = currentUser?.role === 'farmer' || currentUser?.role === 'admin';
+
+  const safeInitialTab = isLogistics ? 'trends' : initialTab;
+  const [activeTab, setActiveTab] = useState<'trends' | 'ml_suggestions'>(safeInitialTab);
   const [trendMetric, setTrendMetric] = useState<'demand' | 'prices' | 'selling_point'>('demand');
   const [requirementFilter, setRequirementFilter] = useState<'all' | 'high' | 'not_at_peak' | 'no_demand'>('all');
   const [selectedProduct, setSelectedProduct] = useState<MarketTrendProduct | null>(null);
@@ -136,13 +143,23 @@ export const MarketTrendsModal: React.FC<MarketTrendsModalProps> = ({
         {/* Modal Header */}
         <div className="px-5 sm:px-6 py-4 bg-white border-b border-[#DDD9CD] flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-[12px] bg-[#E4ECE0] border border-[#2F5233]/30 flex items-center justify-center text-[#2F5233] shadow-2xs">
+            <div className={`w-10 h-10 rounded-[12px] flex items-center justify-center shadow-2xs ${
+              isLogistics
+                ? 'bg-[#EBF3FA] border border-[#3B6FA0]/30 text-[#3B6FA0]'
+                : isBuyer
+                ? 'bg-[#F6E7D3] border border-[#C77B2E]/30 text-[#C77B2E]'
+                : 'bg-[#E4ECE0] border border-[#2F5233]/30 text-[#2F5233]'
+            }`}>
               <BarChart3 size={22} />
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="font-display font-bold text-base sm:text-lg text-[#1C2321]">
-                  Current Agricultural Trends & ML Crop Advisory
+                  {isLogistics
+                    ? 'Freight Volume & Market Commodity Trends'
+                    : isBuyer
+                    ? 'Commercial Procurement Trends & Mandi Benchmarks'
+                    : 'Current Agricultural Trends & ML Crop Advisory'}
                 </h2>
                 <span className="hidden sm:inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#E4ECE0] text-[#2F5233]">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
@@ -150,7 +167,11 @@ export const MarketTrendsModal: React.FC<MarketTrendsModalProps> = ({
                 </span>
               </div>
               <p className="text-xs text-[#5B6660]">
-                Compare peak prices, real-time demand volumes, market gluts, and AI-predicted profitable crops.
+                {isLogistics
+                  ? 'Real-time mandi benchmark rates, peak pricing, and active trade demand volumes across agricultural freight corridors.'
+                  : isBuyer
+                  ? 'Compare real-time mandi prices with Agree Direct contracts, monitor peak thresholds and volume availability.'
+                  : 'Compare peak prices, real-time demand volumes, market gluts, and AI-predicted profitable crops.'}
               </p>
             </div>
           </div>
@@ -180,24 +201,30 @@ export const MarketTrendsModal: React.FC<MarketTrendsModalProps> = ({
               }`}
             >
               <BarChart3 size={16} />
-              <span>Current Market Trends & Graphs</span>
+              <span>{isLogistics ? 'Freight & Market Trends' : 'Current Market Trends & Graphs'}</span>
             </button>
 
-            <button
-              type="button"
-              onClick={() => setActiveTab('ml_suggestions')}
-              className={`px-4 py-2 text-xs sm:text-sm font-bold border-b-2 transition-all flex items-center gap-2 cursor-pointer ${
-                activeTab === 'ml_suggestions'
-                  ? 'border-[#2F5233] text-[#2F5233] bg-[#FAF9F5] rounded-t-[10px]'
-                  : 'border-transparent text-[#5B6660] hover:text-[#1C2321]'
-              }`}
-            >
-              <Sprout size={16} className="text-[#2F5233]" />
-              <span>Farmer Suggestions (ML Demand Engine)</span>
-              <span className="text-[10px] px-1.5 py-0.2 bg-[#F6E7D3] text-[#C77B2E] rounded-full font-extrabold uppercase">
-                AI Model
-              </span>
-            </button>
+            {!isLogistics && (
+              <button
+                type="button"
+                onClick={() => setActiveTab('ml_suggestions')}
+                className={`px-4 py-2 text-xs sm:text-sm font-bold border-b-2 transition-all flex items-center gap-2 cursor-pointer ${
+                  activeTab === 'ml_suggestions'
+                    ? 'border-[#2F5233] text-[#2F5233] bg-[#FAF9F5] rounded-t-[10px]'
+                    : 'border-transparent text-[#5B6660] hover:text-[#1C2321]'
+                }`}
+              >
+                <Sprout size={16} className="text-[#2F5233]" />
+                <span>
+                  {isBuyer
+                    ? 'Agricultural Supply Forecast (ML Engine)'
+                    : 'Farmer Suggestions (ML Demand Engine)'}
+                </span>
+                <span className="text-[10px] px-1.5 py-0.2 bg-[#F6E7D3] text-[#C77B2E] rounded-full font-extrabold uppercase">
+                  AI Model
+                </span>
+              </button>
+            )}
           </div>
 
           <div className="pb-2 text-[11px] text-[#5B6660] hidden md:block">
@@ -1014,14 +1041,20 @@ export const MarketTrendsModal: React.FC<MarketTrendsModalProps> = ({
                               <strong>Key Advice:</strong> {crop.keyGrowingTips}
                             </div>
 
-                            <button
-                              type="button"
-                              onClick={() => handleCommitSowing(crop)}
-                              className="px-5 py-2.5 rounded-[10px] bg-[#2F5233] hover:bg-[#25401F] text-white font-bold text-xs transition-all shadow-xs flex items-center justify-center gap-2 shrink-0 cursor-pointer"
-                            >
-                              <Sprout size={15} />
-                              <span>Pre-Book {simLandAcre} Acre Sowing</span>
-                            </button>
+                            {isFarmer ? (
+                              <button
+                                type="button"
+                                onClick={() => handleCommitSowing(crop)}
+                                className="px-5 py-2.5 rounded-[10px] bg-[#2F5233] hover:bg-[#25401F] text-white font-bold text-xs transition-all shadow-xs flex items-center justify-center gap-2 shrink-0 cursor-pointer"
+                              >
+                                <Sprout size={15} />
+                                <span>Pre-Book {simLandAcre} Acre Sowing</span>
+                              </button>
+                            ) : (
+                              <span className="px-3.5 py-2 rounded-[8px] bg-[#E4ECE0] text-[#2F5233] text-xs font-bold shrink-0">
+                                Sourcing Pipeline Active
+                              </span>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -1039,7 +1072,7 @@ export const MarketTrendsModal: React.FC<MarketTrendsModalProps> = ({
                   </h4>
                 </div>
                 <p className="text-xs text-[#B3412C] leading-relaxed">
-                  The model strongly advises <strong>pausing production of Bottle Gourd (Lauki) and White Cauliflower</strong> for this sowing window. Over 420% regional oversupply has resulted in zero buyer contracts on KrishiLink and wholesale prices collapsing below ₹6/kg in nearby APMC mandis.
+                  The model strongly advises <strong>pausing production of Bottle Gourd (Lauki) and White Cauliflower</strong> for this sowing window. Over 420% regional oversupply has resulted in zero buyer contracts on Agree Direct and wholesale prices collapsing below ₹6/kg in nearby APMC mandis.
                 </p>
               </div>
             </div>
@@ -1049,7 +1082,7 @@ export const MarketTrendsModal: React.FC<MarketTrendsModalProps> = ({
         {/* Modal Footer */}
         <div className="px-5 sm:px-6 py-3 bg-white border-t border-[#DDD9CD] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
           <div className="text-[#5B6660]">
-            KrishiLink Data Intelligence • Model v3.4 • Updated Hourly from APMC Mandi Ingress & Buyer Bids
+            Agree Direct Data Intelligence • Model v3.4 • Updated Hourly from APMC Mandi Ingress & Buyer Bids
           </div>
 
           <button

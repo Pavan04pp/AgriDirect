@@ -25,7 +25,8 @@ import {
   BarChart3,
   Calendar,
   Activity,
-  HeartHandshake
+  HeartHandshake,
+  Sprout
 } from 'lucide-react';
 import { CreateDemandModal } from '../buyer/CreateDemandModal';
 import { MatchingReviewModal } from '../buyer/MatchingReviewModal';
@@ -137,20 +138,22 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
               <span>Current Trends & Graphs</span>
             </button>
 
-            {/* Universal ML Crop Suggestions Button */}
-            <button
-              id="view-ml-suggestions-btn"
-              type="button"
-              onClick={() => {
-                setTrendsModalTab('ml_suggestions');
-                setTrendsModalOpen(true);
-              }}
-              className="px-4 py-2.5 rounded-[10px] bg-[#F6E7D3] hover:bg-[#EDD4B8] text-[#C77B2E] border border-[#C77B2E]/40 font-bold text-xs transition-all shadow-xs flex items-center gap-2 cursor-pointer hover:scale-[1.01]"
-              title="View machine learning crop recommendations based on buyer demand"
-            >
-              <Sparkles size={16} />
-              <span>Farmer Suggestions (ML)</span>
-            </button>
+            {/* Farmer Suggestions (ML): STRICTLY FOR FARMER OR ADMIN */}
+            {(currentUser.role === 'farmer' || currentUser.role === 'admin') && (
+              <button
+                id="view-ml-suggestions-btn"
+                type="button"
+                onClick={() => {
+                  setTrendsModalTab('ml_suggestions');
+                  setTrendsModalOpen(true);
+                }}
+                className="px-4 py-2.5 rounded-[10px] bg-[#F6E7D3] hover:bg-[#EDD4B8] text-[#C77B2E] border border-[#C77B2E]/40 font-bold text-xs transition-all shadow-xs flex items-center gap-2 cursor-pointer hover:scale-[1.01]"
+                title="View machine learning crop recommendations based on buyer demand"
+              >
+                <Sparkles size={16} />
+                <span>Farmer Suggestions (ML)</span>
+              </button>
+            )}
 
             {currentUser.role === 'buyer' && (
               <>
@@ -201,7 +204,7 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
                 className="px-4 py-2.5 rounded-[10px] bg-[#3B6FA0] hover:bg-[#2F5980] text-white font-semibold text-xs transition-colors shadow-xs flex items-center gap-2 cursor-pointer"
               >
                 <Truck size={15} className="text-white" />
-                <span>Logistics Dispatch Console</span>
+                <span>Logistics Fleet Console</span>
               </button>
             )}
 
@@ -379,18 +382,42 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
               <BarChart3 size={15} />
               <span>Interactive Bar Graphs</span>
             </button>
-            <button
-              id="dashboard-open-ml-btn"
-              type="button"
-              onClick={() => {
-                setTrendsModalTab('ml_suggestions');
-                setTrendsModalOpen(true);
-              }}
-              className="px-3.5 py-2 rounded-[10px] bg-[#F6E7D3] hover:bg-[#EDD4B8] text-[#C77B2E] border border-[#C77B2E]/30 font-bold text-xs transition-colors shadow-2xs flex items-center gap-1.5 cursor-pointer"
-            >
-              <Sparkles size={15} />
-              <span>ML Crop Suggestions</span>
-            </button>
+            {(currentUser.role === 'farmer' || currentUser.role === 'admin') && (
+              <button
+                id="dashboard-open-ml-btn"
+                type="button"
+                onClick={() => {
+                  setTrendsModalTab('ml_suggestions');
+                  setTrendsModalOpen(true);
+                }}
+                className="px-3.5 py-2 rounded-[10px] bg-[#F6E7D3] hover:bg-[#EDD4B8] text-[#C77B2E] border border-[#C77B2E]/30 font-bold text-xs transition-colors shadow-2xs flex items-center gap-1.5 cursor-pointer"
+              >
+                <Sparkles size={15} />
+                <span>ML Crop Suggestions</span>
+              </button>
+            )}
+            {currentUser.role === 'logistics' && (
+              <button
+                id="dashboard-open-freight-btn"
+                type="button"
+                onClick={() => onNavigateTab && onNavigateTab('app')}
+                className="px-3.5 py-2 rounded-[10px] bg-[#EBF3FA] hover:bg-[#D7E8F7] text-[#3B6FA0] border border-[#3B6FA0]/30 font-bold text-xs transition-colors shadow-2xs flex items-center gap-1.5 cursor-pointer"
+              >
+                <Truck size={15} />
+                <span>Fleet Dispatch Console</span>
+              </button>
+            )}
+            {currentUser.role === 'buyer' && (
+              <button
+                id="dashboard-open-buyer-desk-btn"
+                type="button"
+                onClick={() => onNavigateTab && onNavigateTab('app')}
+                className="px-3.5 py-2 rounded-[10px] bg-[#F6E7D3] hover:bg-[#EDD4B8] text-[#C77B2E] border border-[#C77B2E]/30 font-bold text-xs transition-colors shadow-2xs flex items-center gap-1.5 cursor-pointer"
+              >
+                <Building2 size={15} />
+                <span>Procurement Pipeline</span>
+              </button>
+            )}
           </div>
         </div>
 
@@ -657,24 +684,103 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
                       </div>
 
                       <div className="flex items-center justify-end gap-2">
-                        {demand.status === 'RESPONSE_CLOSED' && (
-                          <button
-                            type="button"
-                            onClick={() => setSelectedDemandForReview(demand)}
-                            className="px-3 py-1.5 rounded-[8px] bg-[#2F5233] text-white text-xs font-bold hover:bg-[#25401F] transition-colors"
-                          >
-                            Review Aggregation
-                          </button>
+                        {/* ROLE-BASED ACCESS ACTIONS */}
+                        {currentUser.role === 'farmer' && (
+                          <>
+                            {demand.status === 'OPEN' && (
+                              <button
+                                type="button"
+                                onClick={() => setSelectedDemandToSell(demand)}
+                                className="px-3.5 py-1.5 rounded-[8px] bg-[#2F5233] text-white text-xs font-bold hover:bg-[#25401F] transition-colors shadow-2xs flex items-center gap-1.5 cursor-pointer"
+                              >
+                                <Sprout size={13} />
+                                <span>Sell Harvest / Offer</span>
+                              </button>
+                            )}
+                            {demand.status === 'RESPONSE_CLOSED' && (
+                              <span className="px-2.5 py-1 rounded-[6px] bg-[#EFEDE6] text-[#5B6660] text-xs font-semibold">
+                                Sourcing Concluded
+                              </span>
+                            )}
+                            {(demand.status === 'CONFIRMED' || demand.status === 'IN_FULFILMENT') && (
+                              <span className="px-2.5 py-1 rounded-[6px] bg-[#E4ECE0] text-[#2F5233] text-xs font-bold flex items-center gap-1">
+                                <CheckCircle2 size={12} />
+                                <span>Batch Allocated</span>
+                              </span>
+                            )}
+                          </>
                         )}
 
-                        {demand.status === 'OPEN' && (
-                          <button
-                            type="button"
-                            onClick={() => setSelectedDemandToSell(demand)}
-                            className="px-3 py-1.5 rounded-[8px] bg-[#C77B2E] text-white text-xs font-bold hover:bg-[#A86420] transition-colors"
-                          >
-                            Sell Produce
-                          </button>
+                        {currentUser.role === 'buyer' && (
+                          <>
+                            {demand.status === 'RESPONSE_CLOSED' && (
+                              <button
+                                type="button"
+                                onClick={() => setSelectedDemandForReview(demand)}
+                                className="px-3.5 py-1.5 rounded-[8px] bg-[#2F5233] text-white text-xs font-bold hover:bg-[#25401F] transition-colors shadow-2xs flex items-center gap-1.5 cursor-pointer"
+                              >
+                                <span>Review Aggregation (30m)</span>
+                              </button>
+                            )}
+                            {demand.status === 'OPEN' && (
+                              <span className="px-2.5 py-1 rounded-[6px] bg-[#F6E7D3] text-[#C77B2E] text-xs font-semibold">
+                                Collecting Farm Bids
+                              </span>
+                            )}
+                            {(demand.status === 'CONFIRMED' || demand.status === 'IN_FULFILMENT') && (
+                              <button
+                                type="button"
+                                onClick={() => onNavigateTab && onNavigateTab('app')}
+                                className="px-3 py-1.5 rounded-[8px] bg-[#E4ECE0] hover:bg-[#D5E1CF] text-[#2F5233] text-xs font-bold transition-colors cursor-pointer"
+                              >
+                                Track Order →
+                              </button>
+                            )}
+                          </>
+                        )}
+
+                        {currentUser.role === 'logistics' && (
+                          <>
+                            {demand.status === 'OPEN' && (
+                              <span className="px-2.5 py-1 rounded-[6px] bg-[#EFEDE6] text-[#5B6660] text-xs font-semibold">
+                                Awaiting Aggregation
+                              </span>
+                            )}
+                            {demand.status === 'RESPONSE_CLOSED' && (
+                              <span className="px-2.5 py-1 rounded-[6px] bg-[#F6E7D3] text-[#C77B2E] text-xs font-semibold">
+                                Buyer Acceptance Stage
+                              </span>
+                            )}
+                            {(demand.status === 'CONFIRMED' || demand.status === 'IN_FULFILMENT') && (
+                              <button
+                                type="button"
+                                onClick={() => onNavigateTab && onNavigateTab('app')}
+                                className="px-3.5 py-1.5 rounded-[8px] bg-[#3B6FA0] hover:bg-[#2F5980] text-white text-xs font-bold transition-colors shadow-2xs flex items-center gap-1.5 cursor-pointer"
+                              >
+                                <Truck size={13} />
+                                <span>View Freight Routing →</span>
+                              </button>
+                            )}
+                          </>
+                        )}
+
+                        {currentUser.role === 'admin' && (
+                          <>
+                            {demand.status === 'RESPONSE_CLOSED' && (
+                              <button
+                                type="button"
+                                onClick={() => setSelectedDemandForReview(demand)}
+                                className="px-3 py-1.5 rounded-[8px] bg-[#2F5233] text-white text-xs font-bold hover:bg-[#25401F] transition-colors"
+                              >
+                                Review Aggregation
+                              </button>
+                            )}
+                            {demand.status === 'OPEN' && (
+                              <span className="px-2.5 py-1 rounded-[6px] bg-[#EFEDE6] text-[#5B6660] text-xs font-semibold">
+                                Open Sourcing
+                              </span>
+                            )}
+                          </>
                         )}
                       </div>
                     </div>

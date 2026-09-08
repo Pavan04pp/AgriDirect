@@ -216,25 +216,27 @@ const MainAppContent: React.FC = () => {
               </div>
             </button>
 
-            {/* Direct ML Farmer Suggestions Button */}
-            <button
-              id="sidebar-ml-btn"
-              type="button"
-              onClick={() => {
-                setTrendsModalTab('ml_suggestions');
-                setTrendsModalOpen(true);
-              }}
-              className="w-full p-2.5 rounded-[10px] text-xs font-bold flex items-center gap-3 cursor-pointer transition-colors text-left text-[#F6E7D3] hover:text-white hover:bg-white/10 border border-[#C77B2E]/30 bg-[#C77B2E]/10"
-              title="Machine learning suggestions for farmers based on demand"
-            >
-              <Sparkles size={16} className="text-[#C77B2E]" />
-              <div className="flex-1 flex items-center justify-between">
-                <span>Farmer Suggestions</span>
-                <span className="text-[9px] px-1.5 py-0.5 rounded bg-[#C77B2E]/30 text-[#F6E7D3] font-extrabold uppercase">
-                  AI Model
-                </span>
-              </div>
-            </button>
+            {/* Direct ML Farmer Suggestions Button: STRICTLY FOR FARMER OR ADMIN */}
+            {(currentUser.role === 'farmer' || currentUser.role === 'admin') && (
+              <button
+                id="sidebar-ml-btn"
+                type="button"
+                onClick={() => {
+                  setTrendsModalTab('ml_suggestions');
+                  setTrendsModalOpen(true);
+                }}
+                className="w-full p-2.5 rounded-[10px] text-xs font-bold flex items-center gap-3 cursor-pointer transition-colors text-left text-[#F6E7D3] hover:text-white hover:bg-white/10 border border-[#C77B2E]/30 bg-[#C77B2E]/10"
+                title="Machine learning suggestions for farmers based on demand"
+              >
+                <Sparkles size={16} className="text-[#C77B2E]" />
+                <div className="flex-1 flex items-center justify-between">
+                  <span>Farmer Suggestions</span>
+                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-[#C77B2E]/30 text-[#F6E7D3] font-extrabold uppercase">
+                    AI Model
+                  </span>
+                </div>
+              </button>
+            )}
           </div>
 
           {/* Active Registered Perspective Status */}
@@ -423,18 +425,20 @@ const MainAppContent: React.FC = () => {
                   <span>Current Trends (Graphs)</span>
                 </button>
 
-                <button
-                  type="button"
-                  onClick={() => {
-                    setTrendsModalTab('ml_suggestions');
-                    setTrendsModalOpen(true);
-                    setMobileMenuOpen(false);
-                  }}
-                  className="w-full p-2.5 rounded-[8px] text-xs font-bold flex items-center gap-2.5 text-left text-[#F6E7D3] bg-[#C77B2E]/20 border border-[#C77B2E]/30"
-                >
-                  <Sparkles size={15} />
-                  <span>Farmer Suggestions (ML)</span>
-                </button>
+                {(currentUser.role === 'farmer' || currentUser.role === 'admin') && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setTrendsModalTab('ml_suggestions');
+                      setTrendsModalOpen(true);
+                      setMobileMenuOpen(false);
+                    }}
+                    className="w-full p-2.5 rounded-[8px] text-xs font-bold flex items-center gap-2.5 text-left text-[#F6E7D3] bg-[#C77B2E]/20 border border-[#C77B2E]/30"
+                  >
+                    <Sparkles size={15} />
+                    <span>Farmer Suggestions (ML)</span>
+                  </button>
+                )}
               </div>
             </div>
 
