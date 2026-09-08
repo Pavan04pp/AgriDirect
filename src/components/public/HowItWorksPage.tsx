@@ -20,12 +20,12 @@ export const HowItWorksPage: React.FC<{ onStartDemo: () => void }> = ({ onStartD
           How Demand-First Procurement Works
         </h1>
         <p className="text-[#5B6660] text-sm sm:text-base max-w-3xl leading-relaxed">
-          Team Enigma operates on real buyer demand instead of passive produce listings. Rather than having farmers post produce and wait uncertainly, buyers commit procurement requirements, and the platform aggregates supply to fulfill them.
+          Agree Direct operates on real buyer demand instead of passive produce listings. Rather than having farmers post produce and wait uncertainly, buyers commit procurement requirements, and the platform aggregates supply to fulfill them.
         </p>
       </div>
 
       {/* Mandatory Differentiation Table (§2) */}
-      <div className="bg-[#FFFFFF] border border-[#DDD9CD] rounded-[16px] p-6 shadow-sm">
+      <div className="clay-card p-6 shadow-sm">
         <h2 className="font-display font-bold text-lg text-[#1C2321] mb-2 flex items-center gap-2">
           <Scale size={20} className="text-[#2F5233]" />
           Core Platform Differentiation
@@ -42,7 +42,7 @@ export const HowItWorksPage: React.FC<{ onStartDemo: () => void }> = ({ onStartD
                   Conventional Marketplace
                 </th>
                 <th className="py-3 px-4 text-xs font-semibold text-[#2F5233] uppercase tracking-wider w-1/2 bg-[#E4ECE0]/50">
-                  Team Enigma (Demand-First)
+                  Agree Direct (Demand-First)
                 </th>
               </tr>
             </thead>

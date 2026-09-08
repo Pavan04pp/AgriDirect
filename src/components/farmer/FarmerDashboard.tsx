@@ -5,6 +5,8 @@ import { StatusBadge } from '../common/StatusBadge';
 import { QuantityLockBar } from './QuantityLockBar';
 import { QualityAssessmentView } from './QualityAssessmentView';
 import { FarmerApplicationModal } from './FarmerApplicationModal';
+import { MarketTrendsModal } from '../trends/MarketTrendsModal';
+import { ML_CROP_SUGGESTIONS, INITIAL_MARKET_TRENDS } from '../../data/marketTrendsData';
 import {
   Sparkles,
   Layers,
@@ -21,7 +23,11 @@ import {
   SlidersHorizontal,
   PackageCheck,
   Truck,
-  HeartHandshake
+  HeartHandshake,
+  BarChart3,
+  Sprout,
+  AlertTriangle,
+  Award
 } from 'lucide-react';
 
 export const FarmerDashboard: React.FC = () => {
@@ -40,6 +46,8 @@ export const FarmerDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'demands' | 'applications' | 'qa' | 'orders' | 'transactions'>('demands');
   const [selectedDemandForApply, setSelectedDemandForApply] = useState<Demand | null>(null);
   const [isSimpleMode, setIsSimpleMode] = useState<boolean>(true);
+  const [trendsModalOpen, setTrendsModalOpen] = useState<boolean>(false);
+  const [trendsModalTab, setTrendsModalTab] = useState<'trends' | 'ml_suggestions'>('ml_suggestions');
 
   const profile = farmerProfiles[currentUser.id] || {
     id: currentUser.id,
@@ -210,6 +218,129 @@ export const FarmerDashboard: React.FC = () => {
               {language === 'kn' ? 'ಕ್ಯಾಮರಾ ಸ್ಕ್ಯಾನ್ ಮೂಲಕ ದೃಢಪಟ್ಟಿದೆ' : 'AI prototype verified'}
             </span>
           </div>
+        </div>
+      </div>
+
+      {/* =====================================================================
+          MACHINE LEARNING CROP ADVISORY & CURRENT MARKET TRENDS CARD
+         ===================================================================== */}
+      <div className="bg-[#FFFFFF] border-2 border-[#2F5233]/30 rounded-[18px] p-5 shadow-xs space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#DDD9CD] pb-4">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <span className="px-2.5 py-0.5 rounded-full bg-[#E4ECE0] text-[#2F5233] text-[10px] font-extrabold uppercase tracking-wide flex items-center gap-1">
+                <Sparkles size={11} />
+                ML Crop Advisory
+              </span>
+              <span className="text-xs text-[#5B6660]">
+                {language === 'kn' ? 'ಖರೀದಿದಾರರ ಬೇಡಿಕೆ ಆಧಾರಿತ AI ಶಿಫಾರಸು' : 'Trained on Real Buyer Demand & Mandi Arrivals'}
+              </span>
+            </div>
+            <h2 className="font-display font-bold text-base sm:text-lg text-[#1C2321] flex items-center gap-2">
+              <Sprout size={20} className="text-[#2F5233]" />
+              <span>
+                {language === 'kn' ? 'ಮುಂದಿನ ಬೆಳೆಗೆ AI ಶಿಫಾರಸು (ಹೆಚ್ಚಿನ ಬೇಡಿಕೆಯ ಬೆಳೆಗಳು)' : 'What to Grow Next: AI High-Demand Crop Suggestions'}
+              </span>
+            </h2>
+            <p className="text-xs text-[#5B6660]">
+              {language === 'kn'
+                ? 'ಮಾರುಕಟ್ಟೆಯಲ್ಲಿ ಗರಿಷ್ಠ ಬೇಡಿಕೆ ಇರುವ ಮತ್ತು ಮುಂದಿನ ತಿಂಗಳಲ್ಲಿ ಉತ್ತಮ ಬೆಲೆ ತರುವ ಬೆಳೆಗಳನ್ನು ಆರಿಸಿ.'
+                : 'The ML model learns from real-time buyer forward orders to recommend crops with guaranteed procurement and zero market gluts.'}
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              id="farmer-view-trends-btn"
+              type="button"
+              onClick={() => {
+                setTrendsModalTab('trends');
+                setTrendsModalOpen(true);
+              }}
+              className="px-3.5 py-2 rounded-[10px] bg-[#EFEDE6] hover:bg-[#DDD9CD] text-[#1C2321] font-bold text-xs transition-colors flex items-center gap-1.5 cursor-pointer"
+            >
+              <BarChart3 size={15} className="text-[#2F5233]" />
+              <span>Market Trends Graph</span>
+            </button>
+            <button
+              id="farmer-open-ml-btn"
+              type="button"
+              onClick={() => {
+                setTrendsModalTab('ml_suggestions');
+                setTrendsModalOpen(true);
+              }}
+              className="px-3.5 py-2 rounded-[10px] bg-[#2F5233] hover:bg-[#25401F] text-white font-bold text-xs transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs"
+            >
+              <Sparkles size={15} />
+              <span>Full ML Simulator</span>
+            </button>
+          </div>
+        </div>
+
+        {/* 3 Featured ML Recommendations */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          {ML_CROP_SUGGESTIONS.slice(0, 3).map((crop, idx) => (
+            <div
+              key={crop.id}
+              onClick={() => {
+                setTrendsModalTab('ml_suggestions');
+                setTrendsModalOpen(true);
+              }}
+              className="p-3.5 rounded-[12px] bg-[#FAF9F5] border border-[#DDD9CD] hover:border-[#2F5233] cursor-pointer transition-all space-y-2 group"
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-[#1C2321] group-hover:text-[#2F5233] transition-colors">
+                  {crop.cropName}
+                </span>
+                <span className="text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-[#E4ECE0] text-[#2F5233]">
+                  {crop.mlDemandScore}/100 Score
+                </span>
+              </div>
+
+              <div className="text-[11px] text-[#5B6660]">
+                Variety: {crop.variety} • {crop.expectedHarvestWindowDays} Days Cycle
+              </div>
+
+              <div className="pt-1.5 border-t border-[#DDD9CD]/70 flex items-center justify-between text-xs">
+                <div>
+                  <span className="text-[10px] text-[#5B6660] block">Expected Price</span>
+                  <span className="font-mono font-bold text-[#2F5233]">
+                    ₹{crop.projectedHarvestPriceMin} - ₹{crop.projectedHarvestPriceMax}/kg
+                  </span>
+                </div>
+                <div className="text-right">
+                  <span className="text-[10px] text-[#5B6660] block">Est. Profit/Acre</span>
+                  <span className="font-mono font-bold text-[#1C2321]">
+                    ₹{(crop.projectedNetProfitPerAcre / 1000).toFixed(0)}k
+                  </span>
+                </div>
+              </div>
+
+              <div className="text-[10px] text-[#2E7D4F] font-bold bg-[#E4ECE0]/70 p-1.5 rounded-[6px] line-clamp-1">
+                {crop.demandDriver}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Glut Alert Strip */}
+        <div className="p-3 rounded-[10px] bg-[#FFF5F5] border border-[#B3412C]/30 flex items-center justify-between gap-3 text-xs">
+          <div className="flex items-center gap-2 text-[#B3412C]">
+            <AlertTriangle size={16} className="shrink-0" />
+            <span>
+              <strong>Market Glut Warning:</strong> Zero buyer demand for Bottle Gourd (Lauki) & Cauliflower. Wholesale prices down 72%. Avoid planting this week.
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              setTrendsModalTab('trends');
+              setTrendsModalOpen(true);
+            }}
+            className="text-[11px] font-bold text-[#B3412C] underline hover:no-underline shrink-0 cursor-pointer"
+          >
+            View Glut Data &rarr;
+          </button>
         </div>
       </div>
 
@@ -695,6 +826,13 @@ export const FarmerDashboard: React.FC = () => {
           }}
         />
       )}
+
+      {/* Real-time Agricultural Trends & ML Crop Suggestions Modal */}
+      <MarketTrendsModal
+        isOpen={trendsModalOpen}
+        onClose={() => setTrendsModalOpen(false)}
+        initialTab={trendsModalTab}
+      />
     </div>
   );
 };

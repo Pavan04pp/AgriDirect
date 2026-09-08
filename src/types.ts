@@ -284,3 +284,53 @@ export interface DemandTimer {
   isRejected: boolean;
   startedAt: string;
 }
+
+export type DemandRequirementLevel =
+  | 'CRITICAL_HIGH'
+  | 'STABLE_REQUIRED'
+  | 'MODERATE'
+  | 'NOT_AT_PEAK'
+  | 'NO_DEMAND_GLUT';
+
+export interface MarketTrendProduct {
+  id: string;
+  commodity: string;
+  variety?: string;
+  category: 'Vegetables' | 'Fruit Veg' | 'Greens' | 'Tubers' | 'Spices';
+  currentDemandKg: number; // 0 for products with no demand
+  tradeMarketSpotPrice: number; // ₹/kg in APMC Mandi
+  directContractPrice: number; // ₹/kg on KrishiLink
+  peakTimePrice: number; // ₹/kg highest peak time selling price
+  sellingPointScore: number; // 0-100 indicating closeness to peak selling point
+  isPeakSellingPoint: boolean;
+  isRequired: boolean;
+  requirementLevel: DemandRequirementLevel;
+  demandGrowthPct: number; // e.g. +34.5% or -100%
+  primaryMandi: string;
+  buyerCount: number;
+  marketDescription: string;
+  farmerActionAdvisory: string;
+}
+
+export interface MLCropSuggestion {
+  id: string;
+  cropName: string;
+  variety: string;
+  category: string;
+  mlDemandScore: number; // 0-100
+  unmetDemandKg: number;
+  expectedHarvestWindowDays: number;
+  projectedHarvestPriceMin: number;
+  projectedHarvestPriceMax: number;
+  estimatedCostOfCultivationPerAcre: number;
+  projectedNetProfitPerAcre: number;
+  profitRoiPct: number;
+  demandDriver: string;
+  soilSuitability: string[];
+  waterRequirement: 'Low' | 'Medium' | 'High';
+  riskLevel: 'Very Low' | 'Low' | 'Moderate';
+  keyGrowingTips: string;
+  buyersWaitingCount: number;
+  avoidAlternateCropWarning?: string;
+}
+

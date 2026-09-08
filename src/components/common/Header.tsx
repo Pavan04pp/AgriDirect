@@ -2,42 +2,49 @@ import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { UserRole, Language } from '../../types';
 import {
-  Users,
   Building2,
   Tractor,
   Truck,
   ShieldAlert,
-  RotateCcw,
-  Sparkles,
-  HelpCircle,
-  ExternalLink,
   ChevronDown,
   Menu,
   Check,
   Clock,
-  Globe
+  Globe,
+  LogIn,
+  LogOut,
+  UserPlus,
+  LayoutDashboard,
+  Layers,
+  Sparkles
 } from 'lucide-react';
 
 interface HeaderProps {
-  currentTab: 'app' | 'how-it-works' | 'landing';
-  onSelectTab: (tab: 'app' | 'how-it-works' | 'landing') => void;
+  currentTab: 'dashboard' | 'app' | 'how-it-works' | 'landing';
+  onSelectTab: (tab: 'dashboard' | 'app' | 'how-it-works' | 'landing') => void;
   onOpenMobileMenu?: () => void;
+  onOpenAuth: (mode: 'login' | 'signup', role?: UserRole) => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ currentTab, onSelectTab, onOpenMobileMenu }) => {
+export const Header: React.FC<HeaderProps> = ({
+  currentTab,
+  onSelectTab,
+  onOpenMobileMenu,
+  onOpenAuth
+}) => {
   const {
     currentUser,
     setCurrentUser,
     users,
-    resetToDemoSeed,
-    runAutomatedScenarioStep,
-    demoStep,
     demands,
     getDemandTimer,
     language,
     setLanguage,
-    t
+    t,
+    isAuthenticated,
+    logoutUser
   } = useApp();
+
   const [roleDropdownOpen, setRoleDropdownOpen] = useState(false);
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
 
@@ -61,7 +68,8 @@ export const Header: React.FC<HeaderProps> = ({ currentTab, onSelectTab, onOpenM
   };
 
   const getContextTitle = () => {
-    if (currentTab === 'landing') return 'Platform Overview: Demand-First Model';
+    if (currentTab === 'dashboard') return 'Agritech Command & Operations Dashboard';
+    if (currentTab === 'landing') return 'Agree Direct: Agricultural Procurement & Trade';
     if (currentTab === 'how-it-works') return 'Specification & Mathematical Workflow';
     
     switch (currentUser.role) {
@@ -79,18 +87,19 @@ export const Header: React.FC<HeaderProps> = ({ currentTab, onSelectTab, onOpenM
   };
 
   const getContextSubtitle = () => {
+    if (currentTab === 'dashboard') return 'Executive metrics, live APMC mandi spot rates, and rapid actions';
     if (currentTab === 'landing') return t('platform_subtitle');
-    if (currentTab === 'how-it-works') return '8-Stage Multi-Factor Evaluation Lifecycle (§1–§24)';
+    if (currentTab === 'how-it-works') return '8-Stage Multi-Factor Evaluation Lifecycle';
 
     switch (currentUser.role) {
       case 'buyer':
-        return 'Processing Response Window Results';
+        return 'Processing Response Window Results & 30m Acceptance';
       case 'farmer':
         return language === 'kn' ? 'ಬೆಳೆ ಮಾರಾಟ, ಬೆಲೆ ಸಂಧಾನ ಮತ್ತು ಸಾಗಾಣಿಕೆ ಸಡಿಲಿಕೆ' : 'Direct Produce Sale, Price Range Negotiation & Transit Damage Buffer';
       case 'logistics':
         return 'Multi-Stop Optimized Consolidation Fleet';
       case 'admin':
-        return 'Multi-Factor Utility Weights Configuration (§8)';
+        return 'Multi-Factor Utility Weights Configuration';
       default:
         return t('platform_subtitle');
     }
@@ -122,11 +131,11 @@ export const Header: React.FC<HeaderProps> = ({ currentTab, onSelectTab, onOpenM
         </div>
       </div>
 
-      {/* Right Controls: Scenario Runner, Reset, and Role Switcher */}
+      {/* Right Controls: Status, Language, and Role / Auth Switcher */}
       <div className="flex items-center gap-2 sm:gap-4">
         
         {/* Remaining Time badge when on buyer view */}
-        {currentUser.role === 'buyer' && currentTab === 'app' && activeTimer && (
+        {isAuthenticated && currentUser.role === 'buyer' && currentTab === 'app' && activeTimer && (
           <div className="hidden md:flex flex-col items-end">
             <span className="text-[10px] uppercase text-[#5B6660] font-bold tracking-wider flex items-center gap-1">
               <Clock size={11} className={activeTimer.isRunning ? 'text-[#C77B2E] animate-pulse' : 'text-[#5B6660]'} />
@@ -144,35 +153,7 @@ export const Header: React.FC<HeaderProps> = ({ currentTab, onSelectTab, onOpenM
           </div>
         )}
 
-        <div className="hidden md:block h-10 w-[1px] bg-[#DDD9CD]" />
-
-        {/* Quick Scenario Runner Button (§21) */}
-        <button
-          id="run-demo-step-btn"
-          type="button"
-          onClick={runAutomatedScenarioStep}
-          className="hidden sm:inline-flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-[10px] text-xs font-bold bg-[#F6E7D3] hover:bg-[#EDD4B8] text-[#C77B2E] border border-[#C77B2E]/30 transition-colors shadow-xs"
-          title="Step through the §21 end-to-end demo scenario"
-        >
-          <Sparkles size={14} />
-          <span>
-            {demoStep === 0
-              ? 'Run Round-2 Demo'
-              : `Demo Step ${demoStep}/8: Next`}
-          </span>
-        </button>
-
-        {/* Reset Seed Button */}
-        <button
-          id="reset-seed-btn"
-          type="button"
-          onClick={resetToDemoSeed}
-          className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-2 rounded-[10px] text-xs font-medium text-[#5B6660] hover:text-[#1C2321] hover:bg-[#EFEDE6] border border-[#DDD9CD] transition-colors"
-          title="Reset data to initial seed scenario (§25)"
-        >
-          <RotateCcw size={13} />
-          <span className="hidden xl:inline">Reset Seed</span>
-        </button>
+        <div className="hidden md:block h-8 w-[1px] bg-[#DDD9CD]" />
 
         {/* Language Switcher Dropdown */}
         <div className="relative">
@@ -180,7 +161,7 @@ export const Header: React.FC<HeaderProps> = ({ currentTab, onSelectTab, onOpenM
             id="language-switcher-btn"
             type="button"
             onClick={() => setLangDropdownOpen(!langDropdownOpen)}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-[10px] bg-[#E4ECE0] hover:bg-[#D5E1CF] border border-[#2F5233]/30 text-xs font-bold text-[#2F5233] transition-colors shadow-xs"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-[10px] bg-[#E4ECE0] hover:bg-[#D5E1CF] border border-[#2F5233]/30 text-xs font-bold text-[#2F5233] transition-colors shadow-2xs"
             title="ಭಾಷೆ ಬದಲಾಯಿಸಿ / Change Language"
           >
             <Globe size={14} className="text-[#2F5233]" />
@@ -241,70 +222,80 @@ export const Header: React.FC<HeaderProps> = ({ currentTab, onSelectTab, onOpenM
           )}
         </div>
 
-        {/* Persona / Role Selector Dropdown */}
-        <div className="relative">
-          <button
-            id="role-switcher-dropdown"
-            type="button"
-            onClick={() => setRoleDropdownOpen(!roleDropdownOpen)}
-            className="flex items-center gap-2 px-3 py-2 rounded-[10px] bg-[#EFEDE6] hover:bg-[#DDD9CD]/70 border border-[#DDD9CD] text-xs font-semibold text-[#1C2321] transition-colors shadow-xs"
-          >
-            <span className="flex items-center gap-1.5">
-              {getRoleIcon(currentUser.role)}
-              <span className="font-bold">{currentUser.name}</span>
-              <span className="text-[#5B6660] capitalize hidden sm:inline">
-                ({currentUser.role})
-              </span>
-            </span>
-            <ChevronDown size={14} className="text-[#5B6660]" />
-          </button>
-
-          {roleDropdownOpen && (
-            <div
-              id="role-dropdown-menu"
-              className="absolute right-0 mt-2 w-72 bg-white rounded-[12px] border border-[#DDD9CD] shadow-xl py-2 z-50 animate-in fade-in"
-            >
-              <div className="px-3 py-1.5 text-[11px] font-semibold text-[#5B6660] uppercase tracking-wider border-b border-[#DDD9CD]">
-                Switch Persona (§16 User Roles)
-              </div>
-
-              <div className="max-h-80 overflow-y-auto py-1">
-                {users.map((user) => {
-                  const isSelected = user.id === currentUser.id;
-                  return (
-                    <button
-                      key={user.id}
-                      type="button"
-                      onClick={() => {
-                        setCurrentUser(user);
-                        onSelectTab('app');
-                        setRoleDropdownOpen(false);
-                      }}
-                      className={`w-full text-left px-3 py-2 flex items-center justify-between text-xs transition-colors ${
-                        isSelected
-                          ? 'bg-[#E4ECE0] text-[#2F5233] font-semibold'
-                          : 'hover:bg-[#EFEDE6] text-[#1C2321]'
+        {/* Authenticated vs Logged Out Controls */}
+        {isAuthenticated ? (
+          /* User Profile & Single-Role Account Badge with Sign Out */
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-[10px] bg-white border border-[#DDD9CD] shadow-2xs">
+              <div className="flex items-center gap-2">
+                {getRoleIcon(currentUser.role)}
+                <div className="text-left">
+                  <div className="flex items-center gap-1.5 leading-tight">
+                    <span className="font-bold text-xs text-[#1C2321] truncate max-w-[120px] sm:max-w-none">
+                      {currentUser.name}
+                    </span>
+                    <span
+                      className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold uppercase tracking-wider ${
+                        currentUser.role === 'buyer'
+                          ? 'bg-[#F6E7D3] text-[#C77B2E]'
+                          : currentUser.role === 'farmer'
+                          ? 'bg-[#E4ECE0] text-[#2F5233]'
+                          : currentUser.role === 'logistics'
+                          ? 'bg-[#EBF3FA] text-[#3B6FA0]'
+                          : 'bg-[#EFEDE6] text-[#5B6660]'
                       }`}
                     >
-                      <div className="flex items-center gap-2.5">
-                        {getRoleIcon(user.role)}
-                        <div>
-                          <div className="font-semibold">{user.name}</div>
-                          <div className="text-[11px] text-[#5B6660] capitalize">
-                            {user.role} • {user.location.split(',')[0]}
-                          </div>
-                        </div>
-                      </div>
-                      {isSelected && (
-                        <Check size={14} className="text-[#2F5233]" />
-                      )}
-                    </button>
-                  );
-                })}
+                      {currentUser.role === 'buyer'
+                        ? 'Buyer'
+                        : currentUser.role === 'farmer'
+                        ? 'Farmer'
+                        : currentUser.role === 'logistics'
+                        ? 'Logistics'
+                        : 'Admin'}
+                    </span>
+                  </div>
+                  <div className="text-[10px] text-[#5B6660] truncate max-w-[160px] hidden sm:block">
+                    {currentUser.location}
+                  </div>
+                </div>
               </div>
             </div>
-          )}
-        </div>
+
+            <button
+              type="button"
+              onClick={() => {
+                logoutUser();
+                onSelectTab('landing');
+              }}
+              title="Sign Out of this account"
+              className="px-3 py-2 rounded-[10px] bg-[#EFEDE6] hover:bg-[#B3412C]/10 border border-[#DDD9CD] hover:border-[#B3412C]/30 text-[#5B6660] hover:text-[#B3412C] text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer shadow-2xs"
+            >
+              <LogOut size={14} />
+              <span className="hidden sm:inline">Sign Out</span>
+            </button>
+          </div>
+        ) : (
+          /* Logged Out: Sign In / Register Buttons */
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => onOpenAuth('login')}
+              className="px-3 py-2 rounded-[10px] text-xs font-bold text-[#1C2321] hover:bg-[#EFEDE6] transition-colors flex items-center gap-1.5"
+            >
+              <LogIn size={14} className="text-[#2F5233]" />
+              <span>Sign In</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onOpenAuth('signup')}
+              className="px-3.5 py-2 rounded-[10px] bg-[#2F5233] hover:bg-[#25401F] text-white text-xs font-bold transition-colors shadow-2xs flex items-center gap-1.5"
+            >
+              <UserPlus size={14} />
+              <span>Create Account</span>
+            </button>
+          </div>
+        )}
 
       </div>
     </header>

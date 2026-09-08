@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import {
   User,
+  UserRole,
   FarmerProfile,
   BuyerProfile,
   LogisticsProvider,
@@ -34,6 +35,21 @@ import { runMatchingEngine, DEFAULT_MATCHING_WEIGHTS } from '../utils/matchingEn
 import { analyzeProduceQuality } from '../utils/qualityAssessment';
 
 interface AppContextType {
+  // Authentication & Session
+  isAuthenticated: boolean;
+  setIsAuthenticated: (val: boolean) => void;
+  signupUser: (user: User, details?: any) => void;
+  loginUser: (role: UserRole) => void;
+  loginWithGoogle: (googleData: {
+    email: string;
+    name?: string;
+    avatar_url?: string;
+    role?: UserRole;
+    organization?: string;
+    location?: string;
+  }) => Promise<User>;
+  logoutUser: () => void;
+
   // Current user / role
   currentUser: User;
   setCurrentUser: (user: User) => void;
@@ -133,11 +149,140 @@ const INITIAL_DEMAND_TIMERS: Record<string, DemandTimer> = {
 };
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [users] = useState<User[]>(INITIAL_USERS);
-  const [currentUser, setCurrentUser] = useState<User>(INITIAL_USERS[0]); // Start as Buyer
+  const [users, setUsers] = useState<User[]>(INITIAL_USERS);
+  const [currentUser, setCurrentUserState] = useState<User>(() => {
+    try {
+      const savedUser = localStorage.getItem('krishi_user');
+      if (savedUser) {
+        return JSON.parse(savedUser);
+      }
+    } catch {}
+    return INITIAL_USERS[0]; // Default user
+  });
+
+  const setCurrentUser = (user: User) => {
+    setCurrentUserState(user);
+    try {
+      localStorage.setItem('krishi_user', JSON.stringify(user));
+    } catch {}
+  };
+
   const [buyerProfile] = useState<BuyerProfile>(INITIAL_BUYER_PROFILE);
   const [farmerProfiles, setFarmerProfiles] = useState<Record<string, FarmerProfile>>(INITIAL_FARMER_PROFILES);
   const [logisticsProviders, setLogisticsProviders] = useState<Record<string, LogisticsProvider>>(INITIAL_LOGISTICS_PROVIDERS);
+
+  // Authentication State
+  const [isAuthenticated, setIsAuthenticatedState] = useState<boolean>(() => {
+    try {
+      const saved = localStorage.getItem('krishi_auth');
+      if (saved === 'false') return false;
+      return true; // Default to authenticated for instant portfolio testability
+    } catch {
+      return true;
+    }
+  });
+
+  const setIsAuthenticated = (val: boolean) => {
+    setIsAuthenticatedState(val);
+    try {
+      localStorage.setItem('krishi_auth', val ? 'true' : 'false');
+    } catch {}
+  };
+
+  const loginUser = (role: UserRole) => {
+    const user = users.find((u) => u.role === role) || users[0];
+    setCurrentUser(user);
+    setIsAuthenticated(true);
+  };
+
+  const logoutUser = () => {
+    setIsAuthenticated(false);
+    try {
+      localStorage.removeItem('krishi_user');
+    } catch {}
+  };
+
+  const loginWithGoogle = async (googleData: {
+    email: string;
+    name?: string;
+    avatar_url?: string;
+    role?: UserRole;
+    organization?: string;
+    location?: string;
+  }): Promise<User> => {
+    try {
+      const res = await fetch('/api/auth/google', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(googleData),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.user) {
+          setUsers((prev) => (prev.some((u) => u.id === data.user.id) ? prev : [data.user, ...prev]));
+          setCurrentUser(data.user);
+          setIsAuthenticated(true);
+          return data.user;
+        }
+      }
+    } catch (err) {
+      console.warn('Backend /api/auth/google call fallback to client:', err);
+    }
+
+    const assignedRole = googleData.role || 'buyer';
+    const fallbackUser: User = {
+      id: `google_${Date.now()}`,
+      name: googleData.name || 'Google User',
+      email: googleData.email,
+      phone: '+91 98000 00000',
+      role: assignedRole,
+      location: googleData.location || (assignedRole === 'farmer' ? 'Hosakote, Bengaluru Rural' : 'Bengaluru Urban'),
+      verification_status: 'verified',
+      created_at: new Date().toISOString(),
+    };
+    signupUser(fallbackUser, { organization_name: googleData.organization, role: assignedRole });
+    return fallbackUser;
+  };
+
+  const signupUser = (newUser: User, details?: any) => {
+    setUsers((prev) => [newUser, ...prev]);
+    setCurrentUser(newUser);
+    setIsAuthenticated(true);
+
+    if (newUser.role === 'farmer') {
+      setFarmerProfiles((prev) => ({
+        ...prev,
+        [newUser.id]: {
+          user_id: newUser.id,
+          farm_or_fpo_name: details?.organization_name || `${newUser.name}'s Farm`,
+          location: newUser.location,
+          coordinates: { lat: 13.07, lng: 77.79 },
+          produce_categories: ['Tomatoes', 'Onions', 'Potatoes'],
+          total_capacity_kg: 2500,
+          locked_quantity_kg: 0,
+          available_quantity_kg: 2000,
+          reliability_score: 95,
+          historical_deliveries: 10,
+          default_pickup_mode: 'farmgate',
+        },
+      }));
+    } else if (newUser.role === 'logistics') {
+      setLogisticsProviders((prev) => ({
+        ...prev,
+        [newUser.id]: {
+          user_id: newUser.id,
+          provider_name: details?.organization_name || `${newUser.name} Freight`,
+          vehicle_type: 'Medium Truck (14ft)',
+          vehicle_number: 'KA-04-TR-9988',
+          capacity_kg: 2500,
+          availability: true,
+          service_area: 'Bengaluru Rural & Kolar Cluster',
+          current_location: newUser.location,
+          rating: 4.8,
+        },
+      }));
+    }
+  };
   
   const [demands, setDemands] = useState<Demand[]>(INITIAL_DEMANDS);
   const [applications, setApplications] = useState<FarmerApplication[]>(INITIAL_APPLICATIONS);
@@ -878,6 +1023,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   return (
     <AppContext.Provider
       value={{
+        isAuthenticated,
+        setIsAuthenticated,
+        signupUser,
+        loginUser,
+        loginWithGoogle,
+        logoutUser,
         currentUser,
         setCurrentUser,
         users,

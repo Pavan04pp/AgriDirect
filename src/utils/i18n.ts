@@ -3,7 +3,7 @@ import { Language } from '../types';
 export const TRANSLATIONS = {
   kn: {
     // Top Navigation & General
-    app_name: 'ಕೃಷಿ ಕೊಂಡಿ (Krishi Link)',
+    app_name: 'ಅಗ್ರೀ ಡೈರೆಕ್ಟ್ (Agree Direct)',
     platform_subtitle: 'ರೈತರಿಂದ ನೇರ ಖರೀದಿ ಮತ್ತು ಸಂಧಾನ ವೇದಿಕೆ',
     language: 'ಭಾಷೆ',
     kannada: 'ಕನ್ನಡ',
@@ -87,7 +87,7 @@ export const TRANSLATIONS = {
   },
   en: {
     // Top Navigation & General
-    app_name: 'Krishi Link',
+    app_name: 'Agree Direct',
     platform_subtitle: 'Direct Farm-to-Enterprise Demand & Negotiation Engine',
     language: 'Language',
     kannada: 'ಕನ್ನಡ',
@@ -171,7 +171,7 @@ export const TRANSLATIONS = {
   },
   hi: {
     // Top Navigation & General
-    app_name: 'कृषि लिंक (Krishi Link)',
+    app_name: 'एग्री डायरेक्ट (Agree Direct)',
     platform_subtitle: 'किसान से सीधी खरीद और मोलभाव मंच',
     language: 'भाषा',
     kannada: 'ಕನ್ನಡ',
