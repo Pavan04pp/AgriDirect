@@ -102,18 +102,18 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
   const activeOrdersCount = orders.filter((o) => o.status === 'IN_FULFILMENT' || o.status === 'MATCH_CONFIRMED').length;
 
   return (
-    <div id="executive-dashboard" className="space-y-8 pb-12">
+    <div id="executive-dashboard" className="space-y-6 sm:space-y-8 pb-12">
       {/* Top Banner: Greeting & Quick Action Triggers */}
-      <div className="bg-white border border-[#DDD9CD] rounded-[18px] p-6 sm:p-8 shadow-xs relative overflow-hidden">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+      <div className="glass-card p-4 sm:p-6 lg:p-8 rounded-[22px] sm:rounded-[28px] border border-white/85 shadow-lg relative overflow-hidden">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 sm:gap-6">
           <div className="space-y-2 max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-[6px] bg-[#E4ECE0] text-[#2F5233] text-xs font-semibold">
+            <div className="inline-flex items-center gap-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-[#E4ECE0]/80 text-[#2F5233] text-[11px] sm:text-xs font-bold border border-[#2F5233]/20 backdrop-blur-sm">
               <span className="w-2 h-2 rounded-full bg-[#2F5233] animate-pulse" />
               <span>Live Procurement Exchange</span>
               <span>•</span>
               <span>Direct Farmgate-to-Kitchen</span>
             </div>
-            <h1 className="font-display font-bold text-2xl sm:text-3xl text-[#1C2321] tracking-tight">
+            <h1 className="font-display font-extrabold text-xl sm:text-2xl lg:text-3xl text-[#1C2321] tracking-tight">
               Agricultural Demand & Logistics Command Center
             </h1>
             <p className="text-xs sm:text-sm text-[#5B6660] leading-relaxed">
@@ -122,7 +122,7 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
           </div>
 
           {/* Quick Launchpad Buttons based on active role */}
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
             {/* Universal Current Trends & Bar Graphs Button */}
             <button
               id="view-current-trends-btn"
@@ -131,7 +131,7 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
                 setTrendsModalTab('trends');
                 setTrendsModalOpen(true);
               }}
-              className="px-4 py-2.5 rounded-[10px] bg-[#2F5233] hover:bg-[#25401F] text-white font-semibold text-xs transition-all shadow-xs flex items-center gap-2 cursor-pointer hover:scale-[1.01]"
+              className="min-h-[42px] px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-[12px] sm:rounded-[14px] bg-[#2F5233] hover:bg-[#25401F] text-white font-bold text-xs transition-all shadow-sm flex items-center gap-2 cursor-pointer hover:scale-[1.01]"
               title="Open real-time agricultural trend graphs and peak price analysis"
             >
               <BarChart3 size={16} />
@@ -147,7 +147,7 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
                   setTrendsModalTab('ml_suggestions');
                   setTrendsModalOpen(true);
                 }}
-                className="px-4 py-2.5 rounded-[10px] bg-[#F6E7D3] hover:bg-[#EDD4B8] text-[#C77B2E] border border-[#C77B2E]/40 font-bold text-xs transition-all shadow-xs flex items-center gap-2 cursor-pointer hover:scale-[1.01]"
+                className="px-4 py-2.5 rounded-[14px] bg-[#F6E7D3] hover:bg-[#EDD4B8] text-[#C77B2E] border border-[#C77B2E]/40 font-bold text-xs transition-all shadow-2xs flex items-center gap-2 cursor-pointer hover:scale-[1.01]"
                 title="View machine learning crop recommendations based on buyer demand"
               >
                 <Sparkles size={16} />
@@ -160,7 +160,7 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
                 <button
                   type="button"
                   onClick={() => setCreateDemandOpen(true)}
-                  className="px-4 py-2.5 rounded-[10px] bg-white border border-[#DDD9CD] hover:bg-[#EFEDE6] text-[#1C2321] font-semibold text-xs transition-colors shadow-xs flex items-center gap-2 cursor-pointer"
+                  className="px-4 py-2.5 rounded-[14px] bg-white/90 border border-[#DDD9CD] hover:bg-white text-[#1C2321] font-bold text-xs transition-colors shadow-2xs flex items-center gap-2 cursor-pointer"
                 >
                   <Plus size={15} />
                   <span>Post New Demand</span>
@@ -168,7 +168,7 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
                 <button
                   type="button"
                   onClick={() => onNavigateTab && onNavigateTab('app')}
-                  className="px-4 py-2.5 rounded-[10px] bg-white border border-[#DDD9CD] hover:bg-[#EFEDE6] text-[#1C2321] font-semibold text-xs transition-colors flex items-center gap-2 cursor-pointer"
+                  className="px-4 py-2.5 rounded-[14px] bg-white/90 border border-[#DDD9CD] hover:bg-white text-[#1C2321] font-bold text-xs transition-colors flex items-center gap-2 cursor-pointer"
                 >
                   <Building2 size={15} className="text-[#C77B2E]" />
                   <span>My Procurement Desk</span>
@@ -181,7 +181,7 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
                 <button
                   type="button"
                   onClick={() => onNavigateTab && onNavigateTab('app')}
-                  className="px-4 py-2.5 rounded-[10px] bg-[#2F5233] hover:bg-[#25401F] text-white font-semibold text-xs transition-colors shadow-xs flex items-center gap-2 cursor-pointer"
+                  className="px-4 py-2.5 rounded-[14px] bg-[#2F5233] hover:bg-[#25401F] text-white font-bold text-xs transition-colors shadow-sm flex items-center gap-2 cursor-pointer"
                 >
                   <Tractor size={15} className="text-white" />
                   <span>Farmer Produce Desk</span>
@@ -189,7 +189,7 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
                 <button
                   type="button"
                   onClick={() => setQualityModalOpen(true)}
-                  className="px-4 py-2.5 rounded-[10px] bg-[#F6E7D3] hover:bg-[#EDD4B8] text-[#C77B2E] border border-[#C77B2E]/30 font-semibold text-xs transition-colors flex items-center gap-2 cursor-pointer"
+                  className="px-4 py-2.5 rounded-[14px] bg-[#F6E7D3] hover:bg-[#EDD4B8] text-[#C77B2E] border border-[#C77B2E]/30 font-bold text-xs transition-colors flex items-center gap-2 cursor-pointer"
                 >
                   <Camera size={15} />
                   <span>Optical Quality Scan</span>
@@ -201,7 +201,7 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
               <button
                 type="button"
                 onClick={() => onNavigateTab && onNavigateTab('app')}
-                className="px-4 py-2.5 rounded-[10px] bg-[#3B6FA0] hover:bg-[#2F5980] text-white font-semibold text-xs transition-colors shadow-xs flex items-center gap-2 cursor-pointer"
+                className="px-4 py-2.5 rounded-[14px] bg-[#3B6FA0] hover:bg-[#2F5980] text-white font-bold text-xs transition-colors shadow-sm flex items-center gap-2 cursor-pointer"
               >
                 <Truck size={15} className="text-white" />
                 <span>Logistics Fleet Console</span>
@@ -212,7 +212,7 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
               <button
                 type="button"
                 onClick={() => onNavigateTab && onNavigateTab('app')}
-                className="px-4 py-2.5 rounded-[10px] bg-[#1C2321] hover:bg-black text-white font-semibold text-xs transition-colors shadow-xs flex items-center gap-2 cursor-pointer"
+                className="px-4 py-2.5 rounded-[14px] bg-[#1C2321] hover:bg-black text-white font-bold text-xs transition-colors shadow-sm flex items-center gap-2 cursor-pointer"
               >
                 <ShieldCheck size={15} className="text-emerald-400" />
                 <span>Admin Operations Center</span>
@@ -222,7 +222,7 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
         </div>
 
         {/* Live System Ticker Strip */}
-        <div className="mt-6 pt-5 border-t border-[#DDD9CD] grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
+        <div className="mt-6 pt-5 border-t border-[#DDD9CD]/70 grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
           <div>
             <span className="text-[10px] uppercase font-bold text-[#5B6660] tracking-wider block">
               Market Operations
@@ -265,7 +265,7 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
       {/* KPI Cards Grid (6 High-Contrast Metrics) */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
         {/* Metric 1 */}
-        <div className="bg-white border border-[#DDD9CD] rounded-[14px] p-4 shadow-2xs hover:border-[#2F5233] transition-colors">
+        <div className="glass-card rounded-[20px] p-4 border border-white/85 shadow-sm hover:shadow-md transition-all">
           <div className="flex items-center justify-between text-[#5B6660] mb-2">
             <span className="text-[11px] font-bold uppercase tracking-wider">Procured Volume</span>
             <Package size={16} className="text-[#2F5233]" />
@@ -280,7 +280,7 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
         </div>
 
         {/* Metric 2 */}
-        <div className="bg-white border border-[#DDD9CD] rounded-[14px] p-4 shadow-2xs hover:border-[#C77B2E] transition-colors">
+        <div className="glass-card rounded-[20px] p-4 border border-white/85 shadow-sm hover:shadow-md transition-all">
           <div className="flex items-center justify-between text-[#5B6660] mb-2">
             <span className="text-[11px] font-bold uppercase tracking-wider">Active Pipeline</span>
             <DollarSign size={16} className="text-[#C77B2E]" />
@@ -294,7 +294,7 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
         </div>
 
         {/* Metric 3 */}
-        <div className="bg-white border border-[#DDD9CD] rounded-[14px] p-4 shadow-2xs hover:border-[#2F5233] transition-colors">
+        <div className="glass-card rounded-[20px] p-4 border border-white/85 shadow-sm hover:shadow-md transition-all">
           <div className="flex items-center justify-between text-[#5B6660] mb-2">
             <span className="text-[11px] font-bold uppercase tracking-wider">Farmer Premium</span>
             <TrendingUp size={16} className="text-[#2E7D4F]" />
@@ -308,7 +308,7 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
         </div>
 
         {/* Metric 4 */}
-        <div className="bg-white border border-[#DDD9CD] rounded-[14px] p-4 shadow-2xs hover:border-[#3B6FA0] transition-colors">
+        <div className="glass-card rounded-[20px] p-4 border border-white/85 shadow-sm hover:shadow-md transition-all">
           <div className="flex items-center justify-between text-[#5B6660] mb-2">
             <span className="text-[11px] font-bold uppercase tracking-wider">Transit Speed</span>
             <Truck size={16} className="text-[#3B6FA0]" />
@@ -322,7 +322,7 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
         </div>
 
         {/* Metric 5 */}
-        <div className="bg-white border border-[#DDD9CD] rounded-[14px] p-4 shadow-2xs hover:border-[#2F5233] transition-colors">
+        <div className="glass-card rounded-[20px] p-4 border border-white/85 shadow-sm hover:shadow-md transition-all">
           <div className="flex items-center justify-between text-[#5B6660] mb-2">
             <span className="text-[11px] font-bold uppercase tracking-wider">Quality Pass</span>
             <ShieldCheck size={16} className="text-[#2F5233]" />
@@ -336,7 +336,7 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
         </div>
 
         {/* Metric 6 */}
-        <div className="bg-white border border-[#DDD9CD] rounded-[14px] p-4 shadow-2xs hover:border-[#C77B2E] transition-colors">
+        <div className="glass-card rounded-[20px] p-4 border border-white/85 shadow-sm hover:shadow-md transition-all">
           <div className="flex items-center justify-between text-[#5B6660] mb-2">
             <span className="text-[11px] font-bold uppercase tracking-wider">Transit Damage</span>
             <HeartHandshake size={16} className="text-[#C77B2E]" />
@@ -351,16 +351,16 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
       </div>
 
       {/* Interactive Mandi Spot Rates Strip & Current Trend Intelligence Bar */}
-      <div className="bg-white border border-[#DDD9CD] rounded-[16px] p-6 shadow-xs space-y-4">
+      <div className="glass-card p-4 sm:p-6 lg:p-8 rounded-[22px] sm:rounded-[28px] border border-white/85 shadow-lg space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
             <div className="flex items-center gap-2">
-              <span className="px-2 py-0.5 rounded-full bg-[#E4ECE0] text-[#2F5233] text-[10px] font-extrabold uppercase tracking-wide">
+              <span className="px-2.5 py-0.5 rounded-full bg-[#E4ECE0] text-[#2F5233] text-[10px] font-extrabold uppercase tracking-wide border border-[#2F5233]/20">
                 Live Trade Intelligence
               </span>
               <span className="text-xs text-[#5B6660]">• Updated 5 mins ago</span>
             </div>
-            <h2 className="font-display font-bold text-base sm:text-lg text-[#1C2321] flex items-center gap-2 mt-1">
+            <h2 className="font-display font-extrabold text-base sm:text-lg text-[#1C2321] flex items-center gap-2 mt-1">
               <BarChart3 size={19} className="text-[#2F5233]" />
               <span>Current Market Trends, Peak Selling Points & Glut Alerts</span>
             </h2>
@@ -377,7 +377,7 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
                 setTrendsModalTab('trends');
                 setTrendsModalOpen(true);
               }}
-              className="px-3.5 py-2 rounded-[10px] bg-[#2F5233] hover:bg-[#25401F] text-white font-bold text-xs transition-colors shadow-2xs flex items-center gap-1.5 cursor-pointer"
+              className="px-3.5 py-2 rounded-[12px] bg-[#2F5233] hover:bg-[#25401F] text-white font-bold text-xs transition-colors shadow-2xs flex items-center gap-1.5 cursor-pointer"
             >
               <BarChart3 size={15} />
               <span>Interactive Bar Graphs</span>
@@ -390,7 +390,7 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
                   setTrendsModalTab('ml_suggestions');
                   setTrendsModalOpen(true);
                 }}
-                className="px-3.5 py-2 rounded-[10px] bg-[#F6E7D3] hover:bg-[#EDD4B8] text-[#C77B2E] border border-[#C77B2E]/30 font-bold text-xs transition-colors shadow-2xs flex items-center gap-1.5 cursor-pointer"
+                className="px-3.5 py-2 rounded-[12px] bg-[#F6E7D3] hover:bg-[#EDD4B8] text-[#C77B2E] border border-[#C77B2E]/30 font-bold text-xs transition-colors shadow-2xs flex items-center gap-1.5 cursor-pointer"
               >
                 <Sparkles size={15} />
                 <span>ML Crop Suggestions</span>
@@ -401,7 +401,7 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
                 id="dashboard-open-freight-btn"
                 type="button"
                 onClick={() => onNavigateTab && onNavigateTab('app')}
-                className="px-3.5 py-2 rounded-[10px] bg-[#EBF3FA] hover:bg-[#D7E8F7] text-[#3B6FA0] border border-[#3B6FA0]/30 font-bold text-xs transition-colors shadow-2xs flex items-center gap-1.5 cursor-pointer"
+                className="px-3.5 py-2 rounded-[12px] bg-[#EBF3FA] hover:bg-[#D7E8F7] text-[#3B6FA0] border border-[#3B6FA0]/30 font-bold text-xs transition-colors shadow-2xs flex items-center gap-1.5 cursor-pointer"
               >
                 <Truck size={15} />
                 <span>Fleet Dispatch Console</span>
@@ -412,7 +412,7 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
                 id="dashboard-open-buyer-desk-btn"
                 type="button"
                 onClick={() => onNavigateTab && onNavigateTab('app')}
-                className="px-3.5 py-2 rounded-[10px] bg-[#F6E7D3] hover:bg-[#EDD4B8] text-[#C77B2E] border border-[#C77B2E]/30 font-bold text-xs transition-colors shadow-2xs flex items-center gap-1.5 cursor-pointer"
+                className="px-3.5 py-2 rounded-[12px] bg-[#F6E7D3] hover:bg-[#EDD4B8] text-[#C77B2E] border border-[#C77B2E]/30 font-bold text-xs transition-colors shadow-2xs flex items-center gap-1.5 cursor-pointer"
               >
                 <Building2 size={15} />
                 <span>Procurement Pipeline</span>
@@ -429,7 +429,7 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
               setTrendsModalTab('trends');
               setTrendsModalOpen(true);
             }}
-            className="p-3.5 rounded-[12px] bg-[#F4F8F3] border border-[#2F5233]/30 hover:border-[#2F5233] cursor-pointer transition-all hover:shadow-xs group"
+            className="p-4 rounded-[18px] bg-white/80 backdrop-blur-md border border-[#2F5233]/25 hover:border-[#2F5233] cursor-pointer transition-all hover:shadow-md group"
           >
             <div className="flex items-center justify-between text-[10px] font-bold text-[#2F5233] uppercase mb-1">
               <span>🏆 Highest Selling Point</span>
@@ -452,7 +452,7 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
               setTrendsModalTab('trends');
               setTrendsModalOpen(true);
             }}
-            className="p-3.5 rounded-[12px] bg-white border border-[#DDD9CD] hover:border-[#C77B2E] cursor-pointer transition-all hover:shadow-xs group"
+            className="p-4 rounded-[18px] bg-white/80 backdrop-blur-md border border-white/90 hover:border-[#C77B2E] cursor-pointer transition-all hover:shadow-md group"
           >
             <div className="flex items-center justify-between text-[10px] font-bold text-[#C77B2E] uppercase mb-1">
               <span>📦 Most In-Demand</span>
@@ -475,7 +475,7 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
               setTrendsModalTab('trends');
               setTrendsModalOpen(true);
             }}
-            className="p-3.5 rounded-[12px] bg-white border border-[#DDD9CD] hover:border-[#3B6FA0] cursor-pointer transition-all hover:shadow-xs group"
+            className="p-4 rounded-[18px] bg-white/80 backdrop-blur-md border border-white/90 hover:border-[#3B6FA0] cursor-pointer transition-all hover:shadow-md group"
           >
             <div className="flex items-center justify-between text-[10px] font-bold text-[#3B6FA0] uppercase mb-1">
               <span>📉 Not at Peak (Off-Peak)</span>
@@ -498,7 +498,7 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
               setTrendsModalTab('trends');
               setTrendsModalOpen(true);
             }}
-            className="p-3.5 rounded-[12px] bg-[#FFF5F5] border border-[#B3412C]/40 hover:border-[#B3412C] cursor-pointer transition-all hover:shadow-xs group"
+            className="p-4 rounded-[18px] bg-red-50/70 backdrop-blur-md border border-[#B3412C]/30 hover:border-[#B3412C] cursor-pointer transition-all hover:shadow-md group"
           >
             <div className="flex items-center justify-between text-[10px] font-bold text-[#B3412C] uppercase mb-1">
               <span>⚠️ Zero Demand Alert</span>
@@ -527,7 +527,7 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
                   setTrendsModalTab('trends');
                   setTrendsModalOpen(true);
                 }}
-                className="clay-sunken p-3.5 space-y-2 hover:scale-[1.01] transition-all cursor-pointer"
+                className="bg-white/75 backdrop-blur-md border border-white/90 rounded-[16px] p-3.5 space-y-2 hover:shadow-md hover:scale-[1.01] transition-all cursor-pointer"
               >
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-[#1C2321]">{item.commodity}</span>
@@ -541,7 +541,7 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
                   </span>
                 </div>
 
-                <div className="flex items-baseline justify-between pt-1 border-t border-[#DDD9CD]/60">
+                <div className="flex items-baseline justify-between pt-1 border-t border-[#DDD9CD]/50">
                   <div>
                     <span className="text-[10px] text-[#5B6660] block">Mandi Spot</span>
                     <span className="text-xs font-mono font-semibold text-[#5B6660]">
@@ -549,14 +549,14 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
                     </span>
                   </div>
                   <div className="text-right">
-                    <span className="text-[10px] text-[#2F5233] font-semibold block">Agree Direct Contract</span>
+                    <span className="text-[10px] text-[#2F5233] font-semibold block">Agridirect Contract</span>
                     <span className="text-sm font-mono font-extrabold text-[#2F5233]">
                       ₹{item.agreePrice.toFixed(1)}/kg
                     </span>
                   </div>
                 </div>
 
-                <div className="text-[10px] text-[#2E7D4F] font-bold bg-[#E4ECE0] px-2 py-1 rounded-[6px] flex items-center justify-between">
+                <div className="text-[10px] text-[#2E7D4F] font-bold bg-[#E4ECE0]/90 px-2 py-1 rounded-[8px] flex items-center justify-between border border-[#2F5233]/15">
                   <span>Farmer Gain:</span>
                   <span>+₹{farmerGain.toFixed(1)}/kg</span>
                 </div>
@@ -570,10 +570,10 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* Left 2 Cols: Live Commercial Procurement Demands */}
-        <div className="lg:col-span-2 bg-white border border-[#DDD9CD] rounded-[16px] p-6 shadow-xs space-y-4">
+        <div className="lg:col-span-2 glass-card p-4 sm:p-6 lg:p-8 rounded-[22px] sm:rounded-[28px] border border-white/85 shadow-lg space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
-              <h2 className="font-display font-bold text-base text-[#1C2321] flex items-center gap-2">
+              <h2 className="font-display font-extrabold text-base sm:text-lg text-[#1C2321] flex items-center gap-2">
                 <Building2 size={18} className="text-[#C77B2E]" />
                 <span>Active Commercial Demands & Response Windows</span>
               </h2>
@@ -589,10 +589,10 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
                   key={c}
                   type="button"
                   onClick={() => setCommodityFilter(c)}
-                  className={`px-2.5 py-1 rounded-[6px] text-xs font-semibold capitalize transition-colors ${
+                  className={`px-3 py-1.5 rounded-full text-xs font-bold capitalize transition-all cursor-pointer ${
                     commodityFilter === c
-                      ? 'bg-[#2F5233] text-white'
-                      : 'bg-[#EFEDE6] text-[#5B6660] hover:bg-[#DDD9CD]'
+                      ? 'bg-[#2F5233] text-white shadow-xs'
+                      : 'bg-white/70 text-[#5B6660] hover:bg-white/90 border border-[#DDD9CD]/50'
                   }`}
                 >
                   {c}
@@ -618,17 +618,17 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
                 return (
                   <div
                     key={demand.id}
-                    className="p-4 rounded-[12px] border border-[#DDD9CD] hover:border-[#2F5233] bg-[#FDFDFD] transition-all space-y-3"
+                    className="p-4 sm:p-5 rounded-[20px] border border-white/90 hover:border-[#2F5233] bg-white/80 backdrop-blur-md shadow-xs hover:shadow-md transition-all space-y-3"
                   >
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-[8px] bg-[#F6E7D3] text-[#C77B2E] flex items-center justify-center font-bold text-xs">
+                        <div className="w-10 h-10 rounded-[12px] bg-[#F6E7D3] text-[#C77B2E] flex items-center justify-center font-bold text-xs shadow-2xs">
                           {demand.commodity.slice(0, 2).toUpperCase()}
                         </div>
                         <div>
                           <div className="flex items-center gap-2">
-                            <span className="font-bold text-sm text-[#1C2321]">{demand.commodity}</span>
-                            <span className="text-[11px] font-bold px-2 py-0.5 rounded-[4px] bg-[#EFEDE6] text-[#5B6660]">
+                            <span className="font-extrabold text-sm text-[#1C2321]">{demand.commodity}</span>
+                            <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#EFEDE6] text-[#5B6660]">
                               {demand.quality_requirement}
                             </span>
                           </div>
@@ -641,13 +641,13 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
                       {/* Status & Timer Badges */}
                       <div className="flex items-center gap-2">
                         {demand.status === 'RESPONSE_CLOSED' && (
-                          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-[6px] bg-[#F6E7D3] border border-[#C77B2E]/40 text-[#C77B2E] text-xs font-mono font-bold">
+                          <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#F6E7D3] border border-[#C77B2E]/40 text-[#C77B2E] text-xs font-mono font-bold">
                             <Clock size={13} className={timer.isRunning ? 'animate-pulse' : ''} />
                             <span>{timer.isExpired ? 'Auto-Rejected (00:00)' : `${formattedTimer} Left`}</span>
                           </div>
                         )}
                         <span
-                          className={`text-xs font-bold px-2.5 py-1 rounded-[6px] ${
+                          className={`text-xs font-bold px-3 py-1 rounded-full ${
                             demand.status === 'CONFIRMED' || demand.status === 'IN_FULFILMENT'
                               ? 'bg-[#E4ECE0] text-[#2F5233]'
                               : demand.status === 'RESPONSE_CLOSED'
@@ -663,7 +663,7 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
                     </div>
 
                     {/* Quantity, Price Range, Transit Buffer */}
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-[#DDD9CD]/60 text-xs">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-[#DDD9CD]/50 text-xs">
                       <div>
                         <span className="text-[10px] text-[#5B6660] block font-medium">Quantity Needed</span>
                         <span className="font-bold text-[#1C2321]">{demand.quantity_required} kg</span>
@@ -691,19 +691,19 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
                               <button
                                 type="button"
                                 onClick={() => setSelectedDemandToSell(demand)}
-                                className="px-3.5 py-1.5 rounded-[8px] bg-[#2F5233] text-white text-xs font-bold hover:bg-[#25401F] transition-colors shadow-2xs flex items-center gap-1.5 cursor-pointer"
+                                className="px-3.5 py-1.5 rounded-[12px] bg-[#2F5233] text-white text-xs font-bold hover:bg-[#25401F] transition-colors shadow-2xs flex items-center gap-1.5 cursor-pointer"
                               >
                                 <Sprout size={13} />
                                 <span>Sell Harvest / Offer</span>
                               </button>
                             )}
                             {demand.status === 'RESPONSE_CLOSED' && (
-                              <span className="px-2.5 py-1 rounded-[6px] bg-[#EFEDE6] text-[#5B6660] text-xs font-semibold">
+                              <span className="px-2.5 py-1 rounded-[8px] bg-[#EFEDE6] text-[#5B6660] text-xs font-semibold">
                                 Sourcing Concluded
                               </span>
                             )}
                             {(demand.status === 'CONFIRMED' || demand.status === 'IN_FULFILMENT') && (
-                              <span className="px-2.5 py-1 rounded-[6px] bg-[#E4ECE0] text-[#2F5233] text-xs font-bold flex items-center gap-1">
+                              <span className="px-2.5 py-1 rounded-[8px] bg-[#E4ECE0] text-[#2F5233] text-xs font-bold flex items-center gap-1">
                                 <CheckCircle2 size={12} />
                                 <span>Batch Allocated</span>
                               </span>
@@ -717,13 +717,13 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
                               <button
                                 type="button"
                                 onClick={() => setSelectedDemandForReview(demand)}
-                                className="px-3.5 py-1.5 rounded-[8px] bg-[#2F5233] text-white text-xs font-bold hover:bg-[#25401F] transition-colors shadow-2xs flex items-center gap-1.5 cursor-pointer"
+                                className="px-3.5 py-1.5 rounded-[12px] bg-[#2F5233] text-white text-xs font-bold hover:bg-[#25401F] transition-colors shadow-2xs flex items-center gap-1.5 cursor-pointer"
                               >
                                 <span>Review Aggregation (30m)</span>
                               </button>
                             )}
                             {demand.status === 'OPEN' && (
-                              <span className="px-2.5 py-1 rounded-[6px] bg-[#F6E7D3] text-[#C77B2E] text-xs font-semibold">
+                              <span className="px-2.5 py-1 rounded-[8px] bg-[#F6E7D3] text-[#C77B2E] text-xs font-semibold">
                                 Collecting Farm Bids
                               </span>
                             )}
@@ -731,7 +731,7 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
                               <button
                                 type="button"
                                 onClick={() => onNavigateTab && onNavigateTab('app')}
-                                className="px-3 py-1.5 rounded-[8px] bg-[#E4ECE0] hover:bg-[#D5E1CF] text-[#2F5233] text-xs font-bold transition-colors cursor-pointer"
+                                className="px-3 py-1.5 rounded-[10px] bg-[#E4ECE0] hover:bg-[#D5E1CF] text-[#2F5233] text-xs font-bold transition-colors cursor-pointer"
                               >
                                 Track Order →
                               </button>
@@ -742,12 +742,12 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
                         {currentUser.role === 'logistics' && (
                           <>
                             {demand.status === 'OPEN' && (
-                              <span className="px-2.5 py-1 rounded-[6px] bg-[#EFEDE6] text-[#5B6660] text-xs font-semibold">
+                              <span className="px-2.5 py-1 rounded-[8px] bg-[#EFEDE6] text-[#5B6660] text-xs font-semibold">
                                 Awaiting Aggregation
                               </span>
                             )}
                             {demand.status === 'RESPONSE_CLOSED' && (
-                              <span className="px-2.5 py-1 rounded-[6px] bg-[#F6E7D3] text-[#C77B2E] text-xs font-semibold">
+                              <span className="px-2.5 py-1 rounded-[8px] bg-[#F6E7D3] text-[#C77B2E] text-xs font-semibold">
                                 Buyer Acceptance Stage
                               </span>
                             )}
@@ -755,7 +755,7 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
                               <button
                                 type="button"
                                 onClick={() => onNavigateTab && onNavigateTab('app')}
-                                className="px-3.5 py-1.5 rounded-[8px] bg-[#3B6FA0] hover:bg-[#2F5980] text-white text-xs font-bold transition-colors shadow-2xs flex items-center gap-1.5 cursor-pointer"
+                                className="px-3.5 py-1.5 rounded-[12px] bg-[#3B6FA0] hover:bg-[#2F5980] text-white text-xs font-bold transition-colors shadow-2xs flex items-center gap-1.5 cursor-pointer"
                               >
                                 <Truck size={13} />
                                 <span>View Freight Routing →</span>
@@ -770,13 +770,13 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
                               <button
                                 type="button"
                                 onClick={() => setSelectedDemandForReview(demand)}
-                                className="px-3 py-1.5 rounded-[8px] bg-[#2F5233] text-white text-xs font-bold hover:bg-[#25401F] transition-colors"
+                                className="px-3 py-1.5 rounded-[10px] bg-[#2F5233] text-white text-xs font-bold hover:bg-[#25401F] transition-colors"
                               >
                                 Review Aggregation
                               </button>
                             )}
                             {demand.status === 'OPEN' && (
-                              <span className="px-2.5 py-1 rounded-[6px] bg-[#EFEDE6] text-[#5B6660] text-xs font-semibold">
+                              <span className="px-2.5 py-1 rounded-[8px] bg-[#EFEDE6] text-[#5B6660] text-xs font-semibold">
                                 Open Sourcing
                               </span>
                             )}
@@ -792,9 +792,9 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
         </div>
 
         {/* Right Col: Logistics Multi-Stop Route Consolidation */}
-        <div className="bg-white border border-[#DDD9CD] rounded-[16px] p-6 shadow-xs space-y-4">
+        <div className="glass-card p-4 sm:p-6 lg:p-8 rounded-[22px] sm:rounded-[28px] border border-white/85 shadow-lg space-y-4">
           <div>
-            <h2 className="font-display font-bold text-base text-[#1C2321] flex items-center gap-2">
+            <h2 className="font-display font-extrabold text-base sm:text-lg text-[#1C2321] flex items-center gap-2">
               <Truck size={18} className="text-[#3B6FA0]" />
               <span>Consolidated Freight Sequencing</span>
             </h2>
@@ -808,11 +808,11 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
             {logisticsJobs.map((job) => (
               <div
                 key={job.id}
-                className="p-4 rounded-[12px] bg-[#F7F6F2] border border-[#DDD9CD] space-y-3"
+                className="p-4 rounded-[20px] bg-white/80 backdrop-blur-md border border-white/90 shadow-xs space-y-3"
               >
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-[#1C2321] font-mono">{job.id}</span>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-[4px] bg-[#EBF3FA] text-[#3B6FA0]">
+                  <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-[#EBF3FA] text-[#3B6FA0]">
                     {job.status}
                   </span>
                 </div>
@@ -833,7 +833,7 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
                 </div>
 
                 {/* Route Milestones */}
-                <div className="pt-2 border-t border-[#DDD9CD] space-y-2">
+                <div className="pt-2 border-t border-[#DDD9CD]/60 space-y-2">
                   <span className="text-[10px] uppercase font-bold text-[#5B6660] tracking-wider block">
                     Pickups & Hub Sequence
                   </span>
@@ -866,10 +866,10 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
                       onNavigateTab('app');
                     }
                   }}
-                  className={`w-full mt-2 py-2 rounded-[8px] border text-xs font-bold transition-colors ${
+                  className={`w-full mt-2 py-2 rounded-[12px] border text-xs font-bold transition-all cursor-pointer ${
                     currentUser.role === 'logistics'
-                      ? 'bg-[#3B6FA0] text-white hover:bg-[#2B5480] border-[#3B6FA0]'
-                      : 'bg-[#F7F6F2] text-[#5B6660] border-[#DDD9CD]'
+                      ? 'bg-[#3B6FA0] text-white hover:bg-[#2B5480] border-[#3B6FA0] shadow-2xs'
+                      : 'bg-white/60 text-[#5B6660] border-[#DDD9CD]'
                   }`}
                 >
                   {currentUser.role === 'logistics'
@@ -881,7 +881,7 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
           </div>
 
           {/* Direct Escrow Settlements Feed */}
-          <div className="pt-4 border-t border-[#DDD9CD] space-y-2">
+          <div className="pt-4 border-t border-[#DDD9CD]/60 space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-[#1C2321] flex items-center gap-1">
                 <ShieldCheck size={14} className="text-[#2F5233]" />
@@ -889,23 +889,23 @@ export const ExecutiveDashboard: React.FC<ExecutiveDashboardProps> = ({
               </span>
               <span className="text-[10px] text-[#2F5233] font-bold">100% Direct</span>
             </div>
-            <div className="space-y-1.5 text-xs">
-              <div className="p-2 rounded-[8px] bg-[#E4ECE0]/40 border border-[#2F5233]/20 flex items-center justify-between">
+            <div className="space-y-2 text-xs">
+              <div className="p-2.5 rounded-[14px] bg-[#E4ECE0]/50 backdrop-blur-xs border border-[#2F5233]/20 flex items-center justify-between">
                 <div>
                   <div className="font-bold text-[#1C2321]">₹6,200 to Ramesh Gowda</div>
                   <div className="text-[10px] text-[#5B6660]">200 kg Tomatoes • Hosakote</div>
                 </div>
-                <span className="text-[10px] font-bold text-[#2E7D4F] px-1.5 py-0.5 rounded-[4px] bg-white">
+                <span className="text-[10px] font-bold text-[#2E7D4F] px-2 py-0.5 rounded-full bg-white shadow-2xs">
                   Paid
                 </span>
               </div>
 
-              <div className="p-2 rounded-[8px] bg-[#E4ECE0]/40 border border-[#2F5233]/20 flex items-center justify-between">
+              <div className="p-2.5 rounded-[14px] bg-[#E4ECE0]/50 backdrop-blur-xs border border-[#2F5233]/20 flex items-center justify-between">
                 <div>
                   <div className="font-bold text-[#1C2321]">₹4,500 to Suresh Patel</div>
                   <div className="text-[10px] text-[#5B6660]">150 kg Tomatoes • Kolar</div>
                 </div>
-                <span className="text-[10px] font-bold text-[#2E7D4F] px-1.5 py-0.5 rounded-[4px] bg-white">
+                <span className="text-[10px] font-bold text-[#2E7D4F] px-2 py-0.5 rounded-full bg-white shadow-2xs">
                   Paid
                 </span>
               </div>

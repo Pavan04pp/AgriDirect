@@ -200,7 +200,7 @@ app.get('/api/health', (req: Request, res: Response) => {
 // --- 2. GOOGLE OAUTH & AUTHENTICATION ENDPOINTS ---
 // Get Google OAuth Authorization URL
 app.get('/api/auth/google/url', (req: Request, res: Response) => {
-  const clientId = process.env.GOOGLE_CLIENT_ID;
+  const clientId = process.env.GOOGLE_CLIENT_ID || process.env.CLIENT_ID || process.env.VITE_GOOGLE_CLIENT_ID;
   const appUrl = process.env.APP_URL || `${req.protocol}://${req.get('host')}`;
   const redirectUri = `${appUrl}/auth/callback`;
 
@@ -239,36 +239,145 @@ app.get(
     '/api/auth/google/callback',
     '/api/auth/google/callback/'
   ],
-  (req: Request, res: Response) => {
+  async (req: Request, res: Response) => {
     const code = req.query.code;
-    const error = req.query.error;
+    const queryError = req.query.error;
+    const clientId = process.env.GOOGLE_CLIENT_ID || process.env.CLIENT_ID || process.env.VITE_GOOGLE_CLIENT_ID;
+    const clientSecret = process.env.GOOGLE_CLIENT_SECRET || process.env.CLIENT_SECRET;
+    const appUrl = process.env.APP_URL || `${req.protocol}://${req.get('host')}`;
+    const redirectUri = `${appUrl}/auth/callback`;
+
+    let userEmail = '';
+    let userName = '';
+    let userAvatar = '';
+    let errorMessage = queryError ? String(queryError) : '';
+
+    if (code && !errorMessage) {
+      if (clientId && clientSecret) {
+        try {
+          const tokenRes = await fetch('https://oauth2.googleapis.com/token', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({
+              code: String(code),
+              client_id: clientId,
+              client_secret: clientSecret,
+              redirect_uri: redirectUri,
+              grant_type: 'authorization_code',
+            }).toString(),
+          });
+          const tokens: any = await tokenRes.json();
+          if (tokens.error) {
+            errorMessage = tokens.error_description || tokens.error;
+          } else {
+            // Decode id_token or fetch userinfo
+            if (tokens.id_token) {
+              try {
+                const payloadB64 = tokens.id_token.split('.')[1];
+                const payloadStr = Buffer.from(payloadB64, 'base64').toString('utf8');
+                const parsed = JSON.parse(payloadStr);
+                userEmail = parsed.email || '';
+                userName = parsed.name || '';
+                userAvatar = parsed.picture || '';
+              } catch (e) {
+                // fall through to userinfo
+              }
+            }
+            if (!userEmail && tokens.access_token) {
+              const uInfoRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+                headers: { Authorization: `Bearer ${tokens.access_token}` },
+              });
+              const uInfo: any = await uInfoRes.json();
+              userEmail = uInfo.email || '';
+              userName = uInfo.name || '';
+              userAvatar = uInfo.picture || '';
+            }
+          }
+        } catch (exchangeErr: any) {
+          errorMessage = exchangeErr.message || 'Token exchange failed';
+        }
+      } else {
+        // If client secret is not supplied, send code back so client or fallback can handle
+        errorMessage = 'Google Client Secret not configured in environment.';
+      }
+    }
+
+    const isSuccess = Boolean(userEmail && !errorMessage);
+
     res.setHeader('Content-Type', 'text/html');
     res.send(`
     <!DOCTYPE html>
     <html>
       <head>
-        <title>Agree Direct Google Authorization</title>
+        <title>Agree Direct - Google Sign-In</title>
         <style>
-          body { font-family: system-ui, sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; background: #F4F3EE; color: #1C2321; }
-          .card { background: white; padding: 2.5rem; border-radius: 20px; border: 1px solid rgba(255,255,255,0.8); text-align: center; max-width: 440px; box-shadow: 12px 16px 32px rgba(28,35,33,0.08), inset 2px 2px 4px rgba(255,255,255,0.9); }
-          .spinner { width: 36px; height: 36px; border: 3px solid #E4ECE0; border-top-color: #2F5233; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 1.25rem; }
+          body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background: #14241A;
+            color: #FFFFFF;
+          }
+          .card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 2.5rem;
+            border-radius: 24px;
+            border: 1px solid rgba(74, 222, 128, 0.25);
+            text-align: center;
+            max-width: 420px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+          }
+          .spinner {
+            width: 36px;
+            height: 36px;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            border-top-color: #4ADE80;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 1.25rem;
+          }
           @keyframes spin { to { transform: rotate(360deg); } }
-          .badge { display: inline-block; padding: 0.25rem 0.75rem; background: #E4ECE0; color: #2F5233; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; margin-bottom: 0.75rem; }
+          .badge {
+            display: inline-block;
+            padding: 0.35rem 0.85rem;
+            background: rgba(74, 222, 128, 0.15);
+            color: #4ADE80;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            border: 1px solid rgba(74, 222, 128, 0.3);
+          }
         </style>
       </head>
       <body>
         <div class="card">
           <div class="spinner"></div>
-          <span class="badge">Google OAuth Handshake</span>
-          <h2 style="margin: 0 0 0.5rem 0; font-size: 1.25rem; color: #1C2321;">Authorization Successful</h2>
-          <p style="margin: 0; color: #5B6660; font-size: 0.875rem;">Completing secure handshake with Agree Direct...</p>
+          <span class="badge">${isSuccess ? 'Google Account Verified' : 'Authentication Result'}</span>
+          <h2 style="margin: 0 0 0.5rem 0; font-size: 1.25rem; color: #FFFFFF;">
+            ${isSuccess ? 'Welcome ' + (userName || 'Google User') : 'Processing Sign-In...'}
+          </h2>
+          <p style="margin: 0; color: rgba(255, 255, 255, 0.7); font-size: 0.875rem;">
+            ${isSuccess ? 'Redirecting back to Agree Direct Operations Desk...' : 'Finalizing handshake...'}
+          </p>
         </div>
         <script>
-          const payload = {
+          const isSuccess = ${JSON.stringify(isSuccess)};
+          const payload = isSuccess ? {
             type: 'OAUTH_AUTH_SUCCESS',
             provider: 'google',
-            code: ${JSON.stringify(code || '')},
-            error: ${JSON.stringify(error || '')}
+            email: ${JSON.stringify(userEmail)},
+            name: ${JSON.stringify(userName)},
+            avatar_url: ${JSON.stringify(userAvatar)}
+          } : {
+            type: 'OAUTH_AUTH_FAILURE',
+            provider: 'google',
+            error: ${JSON.stringify(errorMessage || 'Google authentication could not be completed')}
           };
 
           if (window.opener) {
@@ -277,11 +386,11 @@ app.get(
             } catch (e) {
               console.error(e);
             }
-            setTimeout(() => window.close(), 1000);
+            setTimeout(() => window.close(), 600);
           } else {
             setTimeout(() => {
               window.location.href = '/';
-            }, 1200);
+            }, 1000);
           }
         </script>
       </body>

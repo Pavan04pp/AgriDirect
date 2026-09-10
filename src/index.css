@@ -25,14 +25,16 @@
 }
 
 body {
-  background-color: var(--color-bg);
+  background-color: #F6F5F0;
   color: var(--color-ink);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-image: 
-    radial-gradient(at 10% 20%, rgba(47, 82, 51, 0.03) 0px, transparent 50%),
-    radial-gradient(at 90% 80%, rgba(199, 123, 46, 0.03) 0px, transparent 50%);
+    radial-gradient(at 15% 15%, rgba(47, 82, 51, 0.08) 0px, transparent 45%),
+    radial-gradient(at 85% 20%, rgba(199, 123, 46, 0.07) 0px, transparent 45%),
+    radial-gradient(at 50% 85%, rgba(46, 125, 79, 0.06) 0px, transparent 50%),
+    radial-gradient(at 90% 85%, rgba(59, 111, 160, 0.05) 0px, transparent 45%);
   background-attachment: fixed;
 }
 
@@ -263,5 +265,110 @@ body {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-ink-muted);
+}
+
+/* =========================================================================
+   GLASSMORPHISM & TRANSLUCENT DESIGN UTILITIES
+   ========================================================================= */
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  border-radius: 24px;
+  box-shadow: 
+    0 16px 36px -8px rgba(28, 35, 33, 0.08),
+    0 4px 12px -2px rgba(28, 35, 33, 0.03),
+    inset 0 1px 2px 0 rgba(255, 255, 255, 0.9);
+  transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.glass-card-interactive {
+  cursor: pointer;
+}
+.glass-card-interactive:hover {
+  transform: translateY(-3px);
+  box-shadow: 
+    0 22px 42px -8px rgba(28, 35, 33, 0.12),
+    inset 0 1px 2px 0 rgba(255, 255, 255, 1);
+}
+
+/* High-tech Emerald Frosted Dark Glass */
+.glass-card-dark {
+  background: linear-gradient(145deg, rgba(17, 33, 23, 0.93) 0%, rgba(10, 20, 14, 0.96) 100%);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(74, 222, 128, 0.25);
+  border-radius: 26px;
+  box-shadow: 
+    0 24px 48px -12px rgba(0, 0, 0, 0.5),
+    0 0 24px -4px rgba(46, 125, 79, 0.2),
+    inset 0 1px 2px rgba(255, 255, 255, 0.18);
+  color: #FFFFFF;
+}
+
+/* Tinted Frosted Glass Cards */
+.glass-card-sage {
+  background: linear-gradient(135deg, rgba(234, 240, 231, 0.88) 0%, rgba(220, 232, 216, 0.76) 100%);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(47, 82, 51, 0.22);
+  border-radius: 24px;
+  box-shadow: 
+    0 16px 36px -8px rgba(47, 82, 51, 0.12),
+    inset 0 1px 2px rgba(255, 255, 255, 0.9);
+}
+
+.glass-card-terracotta {
+  background: linear-gradient(135deg, rgba(253, 243, 231, 0.90) 0%, rgba(246, 231, 211, 0.78) 100%);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(199, 123, 46, 0.24);
+  border-radius: 24px;
+  box-shadow: 
+    0 16px 36px -8px rgba(199, 123, 46, 0.12),
+    inset 0 1px 2px rgba(255, 255, 255, 0.9);
+}
+
+.glass-card-sapphire {
+  background: linear-gradient(135deg, rgba(235, 243, 250, 0.90) 0%, rgba(218, 232, 246, 0.78) 100%);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(59, 111, 160, 0.24);
+  border-radius: 24px;
+  box-shadow: 
+    0 16px 36px -8px rgba(59, 111, 160, 0.12),
+    inset 0 1px 2px rgba(255, 255, 255, 0.9);
+}
+
+.glass-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+}
+
+.glass-input {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1.5px solid rgba(221, 217, 205, 0.85);
+  border-radius: 16px;
+  transition: all 0.2s ease;
+}
+.glass-input:focus {
+  background: #FFFFFF;
+  border-color: #2F5233;
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(47, 82, 51, 0.14);
 }
 

@@ -134,11 +134,11 @@ export const BuyerDashboard: React.FC = () => {
       </div>
 
       {/* Navigation Sub-Tabs */}
-      <div className="flex border-b border-[#DDD9CD] gap-3">
+      <div className="flex border-b border-[#DDD9CD] gap-2 overflow-x-auto pb-0.5">
         <button
           type="button"
           onClick={() => setActiveTab('demands')}
-          className={`pb-3 px-3 text-xs font-bold border-b-2 transition-colors ${
+          className={`min-h-[44px] px-3.5 text-xs font-bold border-b-2 whitespace-nowrap transition-colors flex items-center gap-1.5 cursor-pointer ${
             activeTab === 'demands'
               ? 'border-[#2F5233] text-[#2F5233]'
               : 'border-transparent text-[#5B6660] hover:text-[#1C2321]'
@@ -149,7 +149,7 @@ export const BuyerDashboard: React.FC = () => {
         <button
           type="button"
           onClick={() => setActiveTab('orders')}
-          className={`pb-3 px-3 text-xs font-bold border-b-2 transition-colors ${
+          className={`min-h-[44px] px-3.5 text-xs font-bold border-b-2 whitespace-nowrap transition-colors flex items-center gap-1.5 cursor-pointer ${
             activeTab === 'orders'
               ? 'border-[#2F5233] text-[#2F5233]'
               : 'border-transparent text-[#5B6660] hover:text-[#1C2321]'
@@ -160,7 +160,7 @@ export const BuyerDashboard: React.FC = () => {
         <button
           type="button"
           onClick={() => setActiveTab('logistics')}
-          className={`pb-3 px-3 text-xs font-bold border-b-2 transition-colors ${
+          className={`min-h-[44px] px-3.5 text-xs font-bold border-b-2 whitespace-nowrap transition-colors flex items-center gap-1.5 cursor-pointer ${
             activeTab === 'logistics'
               ? 'border-[#2F5233] text-[#2F5233]'
               : 'border-transparent text-[#5B6660] hover:text-[#1C2321]'

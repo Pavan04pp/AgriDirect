@@ -138,33 +138,98 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
     try {
       const res = await fetch('/api/auth/google/url');
-      if (res.ok) {
-        const data = await res.json();
-        if (data.configured && data.url) {
-          const authWindow = window.open(data.url, 'google_oauth_popup', 'width=520,height=620');
-          if (authWindow) {
-            const onMessage = async (event: MessageEvent) => {
-              if (event.data?.type === 'OAUTH_AUTH_SUCCESS' && event.data?.provider === 'google') {
-                window.removeEventListener('message', onMessage);
-                await loginWithGoogle({
-                  email: googleEmail,
-                  name: googleName,
-                  role: selectedRole,
-                  organization: `${googleName}'s ${selectedRole === 'buyer' ? 'Kitchen' : selectedRole === 'farmer' ? 'FPO' : 'Transport'}`,
-                });
-                onClose();
-              }
-            };
-            window.addEventListener('message', onMessage);
+      const data = await res.json();
+
+      if (!data.configured || !data.url) {
+        // If Google credentials are not configured in .env, gracefully fallback to normal login
+        setLoginError('Google OAuth is not configured yet in environment. Switched to normal email and password login.');
+        setMode('login');
+        setAuthStage('credentials');
+        setGoogleLoading(false);
+        return;
+      }
+
+      // Open Google popup window centered on screen
+      const popupWidth = 520;
+      const popupHeight = 640;
+      const left = window.screenX + (window.outerWidth - popupWidth) / 2;
+      const top = window.screenY + (window.outerHeight - popupHeight) / 2;
+      const authWindow = window.open(
+        data.url,
+        'google_oauth_popup',
+        `width=${popupWidth},height=${popupHeight},left=${left},top=${top},status=no,resizable=yes`
+      );
+
+      if (!authWindow) {
+        setLoginError('Popup was blocked by your browser. Switched to normal email and password login.');
+        setMode('login');
+        setAuthStage('credentials');
+        setGoogleLoading(false);
+        return;
+      }
+
+      let authCompleted = false;
+
+      const onMessage = async (event: MessageEvent) => {
+        if (event.data?.type === 'OAUTH_AUTH_SUCCESS' && event.data?.provider === 'google') {
+          authCompleted = true;
+          window.removeEventListener('message', onMessage);
+          clearInterval(pollTimer);
+
+          const extractedEmail = event.data.email || '';
+          const extractedName = event.data.name || (extractedEmail ? extractedEmail.split('@')[0] : 'Google User');
+          const avatarUrl = event.data.avatar_url;
+
+          try {
+            // Extract name of Google account and email ID. That's it, no password!
+            await loginWithGoogle({
+              email: extractedEmail,
+              name: extractedName,
+              avatar_url: avatarUrl,
+              role: selectedRole,
+              organization: `${extractedName}'s ${selectedRole === 'buyer' ? 'Kitchen' : selectedRole === 'farmer' ? 'FPO' : 'Transport'}`,
+            });
+            onClose();
+          } catch (loginErr) {
+            setLoginError('Could not finalize Google login. Switched to normal email and password login.');
+            setMode('login');
+            setAuthStage('credentials');
+          } finally {
+            setGoogleLoading(false);
+          }
+        } else if (event.data?.type === 'OAUTH_AUTH_FAILURE' && event.data?.provider === 'google') {
+          authCompleted = true;
+          window.removeEventListener('message', onMessage);
+          clearInterval(pollTimer);
+          setGoogleLoading(false);
+          setLoginError(`Google sign-in failed (${event.data.error || 'Access denied'}). Switched to normal email and password login.`);
+          setMode('login');
+          setAuthStage('credentials');
+        }
+      };
+
+      window.addEventListener('message', onMessage);
+
+      // Check if popup closed by user before finishing
+      const pollTimer = setInterval(() => {
+        if (authWindow.closed) {
+          clearInterval(pollTimer);
+          window.removeEventListener('message', onMessage);
+          setGoogleLoading(false);
+          if (!authCompleted) {
+            setLoginError('Google sign-in was closed. Switched to normal email and password login.');
+            setMode('login');
+            setAuthStage('credentials');
           }
         }
-      }
-    } catch {
-      // Fallback
-    }
+      }, 700);
 
-    setGoogleLoading(false);
-    setAuthStage('google_role');
+    } catch (err: any) {
+      setGoogleLoading(false);
+      setLoginError('Could not reach Google authentication service. Switched to normal email and password login.');
+      setMode('login');
+      setAuthStage('credentials');
+    }
   };
 
   const handleCompleteGoogleLogin = async () => {
@@ -339,7 +404,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         }
         setCurrentUser(pendingUser);
         setIsAuthenticated(true);
-        setSignupSuccessMsg('2-Factor Security Authorization Complete. Entering Agree Direct...');
+        setSignupSuccessMsg('2-Factor Security Authorization Complete. Entering Agridirect...');
         setTimeout(() => {
           onClose();
         }, 600);
@@ -361,29 +426,29 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-stone-900/40 backdrop-blur-sm p-3 sm:p-4 overflow-y-auto">
-      {/* Outer Claymorphic Frame */}
-      <div className="clay-card w-full max-w-lg overflow-hidden my-auto border border-white/80 transition-all duration-300">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-md p-3 sm:p-4 overflow-y-auto">
+      {/* Outer Glassmorphic Frame */}
+      <div className="glass-card w-full max-w-lg overflow-hidden my-auto border border-white/80 rounded-[22px] sm:rounded-[28px] shadow-2xl transition-all duration-300">
         
-        {/* Header Bar with Claymorphism and Agree Direct Identity */}
-        <div className="px-6 py-5 bg-[#1C2421] text-white flex items-center justify-between border-b border-white/10 relative overflow-hidden">
-          {/* Subtle Neorealist Ambient Shimmer */}
-          <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-[#2F5233]/30 to-transparent rounded-full blur-2xl pointer-events-none" />
+        {/* Header Bar with Translucent Emerald Glass and Agridirect Identity */}
+        <div className="px-4 sm:px-6 py-4 sm:py-5 bg-gradient-to-r from-[#14261B] to-[#1A3324] text-white flex items-center justify-between border-b border-emerald-500/20 relative overflow-hidden">
+          {/* Ambient Frosted Shimmer */}
+          <div className="absolute top-0 right-0 w-48 h-48 bg-emerald-500/15 rounded-full blur-2xl pointer-events-none" />
 
           <div className="flex items-center gap-3 relative z-10">
-            <div className="w-10 h-10 rounded-[14px] bg-[#2F5233] text-white flex items-center justify-center font-display font-extrabold text-base shadow-sm border border-white/20">
+            <div className="w-10 h-10 rounded-[14px] sm:rounded-[16px] bg-emerald-600/40 text-white flex items-center justify-center font-display font-extrabold text-base shadow-sm border border-emerald-400/30 backdrop-blur-md shrink-0">
               AD
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="font-display font-extrabold text-lg text-white tracking-tight leading-tight">
-                  Agree Direct
+                <h2 className="font-display font-extrabold text-base sm:text-lg text-white tracking-tight leading-tight">
+                  Agridirect
                 </h2>
-                <span className="clay-badge bg-[#2F5233] text-white/90 text-[10px] py-0.5 px-2 font-mono">
+                <span className="glass-pill bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-[10px] py-0.5 px-2 font-mono">
                   AES-256
                 </span>
               </div>
-              <p className="text-xs text-[#DDD9CD]/80 font-medium">
+              <p className="text-xs text-emerald-100/70 font-medium">
                 {selectedRole === 'farmer' && (language === 'kn' ? 'ರೈತ ಮತ್ತು ಎಫ್.ಪಿ.ಒ ಪೋರ್ಟಲ್' : 'Producer & FPO Direct Clearing')}
                 {selectedRole === 'buyer' && (language === 'kn' ? 'ಖರೀದಿದಾರರ ಬೇಡಿಕೆ ಪೋರ್ಟಲ್' : 'Institutional Buyer Procurement')}
                 {selectedRole === 'logistics' && (language === 'kn' ? 'ಸಾರಿಗೆ ಪೋರ್ಟಲ್' : 'Freight Carrier & Routing Desk')}
@@ -395,7 +460,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="p-2 rounded-[12px] bg-white/5 hover:bg-white/15 text-[#DDD9CD] hover:text-white transition-all cursor-pointer relative z-10"
+            className="w-10 h-10 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-[14px] bg-white/10 hover:bg-white/20 text-white/80 hover:text-white transition-all cursor-pointer relative z-10 backdrop-blur-sm shrink-0"
+            aria-label="Close authentication modal"
           >
             <X size={18} />
           </button>
@@ -917,7 +983,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                       <span>Zero-Knowledge Handshake & Direct Escrow</span>
                     </div>
                     <p className="text-[#5B6660]">
-                      Account creation initiates verified agricultural escrow tokens with 2-factor clearance on Agree Direct.
+                      Account creation initiates verified agricultural escrow tokens with 2-factor clearance on Agridirect.
                     </p>
                   </div>
 
@@ -1004,7 +1070,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   ) : (
                     <>
                       <CheckCircle2 size={18} />
-                      <span>Verify & Access Agree Direct Desk</span>
+                      <span>Verify & Access Agridirect Desk</span>
                     </>
                   )}
                 </button>
@@ -1042,7 +1108,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 Biometric Passkey Authentication
               </h3>
               <p className="text-xs text-[#5B6660] max-w-xs mx-auto">
-                Validating hardware biometric credentials with Agree Direct zero-trust enclave...
+                Validating hardware biometric credentials with Agridirect zero-trust enclave...
               </p>
               <button
                 type="button"
@@ -1069,7 +1135,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   </div>
                   <div>
                     <h3 className="text-xs font-bold text-[#1C2321]">Google Workspace Verified</h3>
-                    <p className="text-[11px] text-[#5B6660]">Single Sign-On authentication for Agree Direct</p>
+                    <p className="text-[11px] text-[#5B6660]">Single Sign-On authentication for Agridirect</p>
                   </div>
                 </div>
 
@@ -1143,7 +1209,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   className="clay-button-primary w-full h-12 flex items-center justify-center gap-2 cursor-pointer text-xs sm:text-sm font-bold"
                 >
                   <CheckCircle2 size={16} />
-                  <span>Enter Agree Direct as {selectedRole.toUpperCase()}</span>
+                  <span>Enter Agridirect as {selectedRole.toUpperCase()}</span>
                 </button>
 
                 <button
@@ -1162,7 +1228,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         <div className="px-6 py-3.5 bg-[#F4F3EE] border-t border-[#DDD9CD]/50 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-[#5B6660]">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-[#2E7D4F] animate-pulse" />
-            <span className="font-bold text-[#1C2321]">Agree Direct Enterprise Network</span>
+            <span className="font-bold text-[#1C2321]">Agridirect Enterprise Network</span>
           </div>
           <div className="flex items-center gap-3 text-[11px] font-semibold">
             <span>SOC-2 Certified</span>

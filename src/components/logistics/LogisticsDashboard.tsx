@@ -75,15 +75,15 @@ export const LogisticsDashboard: React.FC = () => {
         <div className="space-y-6">
           {/* Job Selection Tabs if multiple */}
           {logisticsJobs.length > 1 && (
-            <div className="flex gap-2">
+            <div className="flex gap-2 overflow-x-auto pb-1">
               {logisticsJobs.map((j) => (
                 <button
                   key={j.id}
                   type="button"
                   onClick={() => setSelectedJobId(j.id)}
-                  className={`px-3 py-1.5 rounded-[8px] text-xs font-semibold border transition-colors ${
+                  className={`min-h-[40px] px-3 py-1.5 rounded-[10px] text-xs font-semibold border whitespace-nowrap transition-colors flex items-center cursor-pointer ${
                     activeJob?.id === j.id
-                      ? 'bg-[#3B6FA0] text-white border-[#3B6FA0]'
+                      ? 'bg-[#3B6FA0] text-white border-[#3B6FA0] shadow-xs'
                       : 'bg-white text-[#5B6660] border-[#DDD9CD] hover:bg-[#EFEDE6]'
                   }`}
                 >

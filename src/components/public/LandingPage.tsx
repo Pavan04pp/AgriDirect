@@ -39,7 +39,7 @@ interface LandingPageProps {
   onOpenAuth: (mode: 'login' | 'signup', role?: UserRole) => void;
 }
 
-// Live Commodity Pricing Comparison Data (APMC Mandi vs Agree Direct Direct Contract)
+// Live Commodity Pricing Comparison Data (APMC Mandi vs Agridirect Direct Contract)
 const MARKET_TREND_DATA = [
   { day: 'Mon', apmcPrice: 28, agreeDirectPrice: 38, farmerCost: 21, volumeMT: 12 },
   { day: 'Tue', apmcPrice: 24, agreeDirectPrice: 38, farmerCost: 21, volumeMT: 18 },
@@ -60,117 +60,240 @@ export const LandingPage: React.FC<LandingPageProps> = ({
   const publicDemands = demands.slice(0, 4);
 
   return (
-    <div id="landing-page" className="max-w-7xl mx-auto px-4 py-4 sm:py-8 space-y-12">
+    <div id="landing-page" className="max-w-7xl mx-auto px-3 sm:px-4 py-3 sm:py-8 space-y-8 sm:space-y-12">
       
-      {/* Hero Section: Enterprise Demand-First Positioning with Tactile Claymorphism */}
-      <div className="clay-card p-6 sm:p-12 relative overflow-hidden">
-        {/* Surrealist / Neorealist Ambient Diffuse Spheres */}
-        <div className="absolute -top-24 -right-24 w-96 h-96 bg-gradient-to-bl from-[#2F5233]/15 via-[#C77B2E]/10 to-transparent rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-24 -left-24 w-80 h-80 bg-gradient-to-tr from-[#2F5233]/10 to-transparent rounded-full blur-3xl pointer-events-none" />
+      {/* Hero Section: Enterprise Demand-First Positioning with Modern Glassmorphism */}
+      <div className="glass-card p-5 sm:p-8 lg:p-12 relative overflow-hidden rounded-[24px] sm:rounded-[32px] border border-white/85 shadow-xl">
+        {/* Atmospheric Ambient Diffuse Glows */}
+        <div className="absolute -top-24 -right-24 w-96 h-96 bg-gradient-to-bl from-[#2F5233]/20 via-[#C77B2E]/15 to-transparent rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-24 -left-24 w-80 h-80 bg-gradient-to-tr from-[#2F5233]/15 to-transparent rounded-full blur-3xl pointer-events-none" />
 
-        <div className="max-w-3xl space-y-6 relative z-10">
-          <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-[#EAF0E7] text-[#2F5233] text-xs font-extrabold tracking-wide shadow-xs border border-white/60">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#2E7D4F] animate-pulse" />
-            <span>Agree Direct Commercial Agritech Platform</span>
-            <span>•</span>
-            <span className="text-[#C77B2E]">Zero Speculative Intermediaries</span>
-          </div>
+        {/* Balanced 2-Column Grid: Left Content + Right Live Terminal Card */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-center relative z-10">
+          
+          {/* Left Column (7 cols): Main Value Proposition & Actions */}
+          <div className="lg:col-span-7 space-y-5 sm:space-y-6">
+            <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-[#EAF0E7]/80 backdrop-blur-sm text-[#2F5233] text-[11px] sm:text-xs font-extrabold tracking-wide shadow-xs border border-[#2F5233]/25">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#2E7D4F] animate-pulse" />
+              <span>Agridirect Agritech Network</span>
+              <span>•</span>
+              <span className="text-[#C77B2E]">Zero Broker Deductions</span>
+            </div>
 
-          <h1 className="font-display font-extrabold text-3xl sm:text-5xl lg:text-6xl text-[#1C2321] tracking-tight leading-[1.12]">
-            Direct Farmgate-to-Enterprise Agricultural Procurement.
-          </h1>
+            <h1 className="font-display font-extrabold text-2xl sm:text-4xl lg:text-[52px] text-[#1C2321] tracking-tight leading-[1.14]">
+              Direct Farmgate-to-Enterprise Agricultural Procurement.
+            </h1>
 
-          <p className="text-[#5B6660] text-sm sm:text-lg leading-relaxed">
-            Eliminating mandi broker commissions and post-harvest produce waste. Institutional kitchens, hotels, and retail buyers lock verified demand contracts; Agree Direct aggregates certified local farm supply and coordinates consolidated cold freight routing.
-          </p>
+            <p className="text-[#5B6660] text-xs sm:text-base lg:text-lg leading-relaxed max-w-2xl">
+              Eliminating mandi broker commissions and post-harvest produce waste. Institutional kitchens, hotels, and retail buyers lock verified demand contracts; Agridirect aggregates certified local farm supply and coordinates consolidated cold freight routing.
+            </p>
 
-          {/* Tactile Action Buttons */}
-          <div className="pt-2 flex flex-wrap items-center gap-3.5">
-            {isAuthenticated ? (
-              <button
-                type="button"
-                onClick={onNavigateToApp}
-                className="clay-button-primary px-7 py-3.5 flex items-center gap-2.5 cursor-pointer text-sm font-extrabold"
-              >
-                <span>Enter Operations Desk</span>
-                <ArrowRight size={17} />
-              </button>
-            ) : (
-              <>
+            {/* Action Buttons Cluster */}
+            <div className="pt-1 flex flex-wrap items-center gap-2.5 sm:gap-3">
+              {isAuthenticated ? (
                 <button
                   type="button"
-                  onClick={() => onOpenAuth('signup', 'buyer')}
-                  className="clay-button-primary px-7 py-3.5 flex items-center gap-2.5 cursor-pointer text-sm font-extrabold"
+                  onClick={onNavigateToApp}
+                  className="clay-button-primary min-h-[44px] px-6 sm:px-7 py-3 sm:py-3.5 flex items-center gap-2.5 cursor-pointer text-xs sm:text-sm font-extrabold rounded-[16px]"
                 >
-                  <span>Post Verified Demand</span>
+                  <span>Enter Operations Desk</span>
                   <ArrowRight size={17} />
                 </button>
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => onOpenAuth('signup', 'buyer')}
+                    className="clay-button-primary min-h-[44px] px-5 sm:px-6 py-3 sm:py-3.5 flex items-center gap-2 cursor-pointer text-xs sm:text-sm font-extrabold rounded-[16px] shadow-sm"
+                  >
+                    <span>Post Verified Demand</span>
+                    <ArrowRight size={16} />
+                  </button>
 
-                <button
-                  type="button"
-                  onClick={() => onOpenAuth('signup', 'farmer')}
-                  className="clay-button-secondary px-6 py-3.5 flex items-center gap-2 cursor-pointer text-sm font-bold"
-                >
-                  <Tractor size={17} className="text-[#2F5233]" />
-                  <span>Sell Harvest as Farmer / FPO</span>
-                </button>
+                  <button
+                    type="button"
+                    onClick={() => onOpenAuth('signup', 'farmer')}
+                    className="clay-button-secondary min-h-[44px] px-4 sm:px-5 py-3 sm:py-3.5 flex items-center gap-2 cursor-pointer text-xs sm:text-sm font-bold rounded-[16px]"
+                  >
+                    <Tractor size={17} className="text-[#2F5233]" />
+                    <span>Sell Harvest as Farmer</span>
+                  </button>
 
+                  <button
+                    type="button"
+                    onClick={() => onOpenAuth('login')}
+                    className="min-h-[44px] px-3.5 py-3 text-[#5B6660] hover:text-[#1C2321] font-bold text-xs sm:text-sm cursor-pointer hover:underline flex items-center"
+                  >
+                    Sign In &rarr;
+                  </button>
+                </>
+              )}
+            </div>
+
+            {/* Key Metric Highlights in Translucent Frosted Glass Badges */}
+            <div className="pt-4 border-t border-[#DDD9CD]/70 grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs">
+              <div className="glass-pill bg-white/70 p-3 rounded-[16px] border border-white/80 flex flex-col justify-center">
+                <span className="text-[10px] uppercase font-bold text-[#5B6660] block mb-0.5">Procurement Flow</span>
+                <span className="font-display font-extrabold text-base text-[#1C2321] block">48.5 MT / Mo</span>
+              </div>
+              <div className="glass-pill bg-white/70 p-3 rounded-[16px] border border-white/80 flex flex-col justify-center">
+                <span className="text-[10px] uppercase font-bold text-[#5B6660] block mb-0.5">Farmer Margin</span>
+                <span className="font-display font-extrabold text-base text-[#2E7D4F] block">+19.4% Premium</span>
+              </div>
+              <div className="glass-pill bg-white/70 p-3 rounded-[16px] border border-white/80 flex flex-col justify-center">
+                <span className="text-[10px] uppercase font-bold text-[#5B6660] block mb-0.5">Damage Buffer</span>
+                <span className="font-display font-extrabold text-base text-[#C77B2E] block">±5% Tolerance</span>
+              </div>
+              <div className="glass-pill bg-white/70 p-3 rounded-[16px] border border-white/80 flex flex-col justify-center">
+                <span className="text-[10px] uppercase font-bold text-[#5B6660] block mb-0.5">Clearing Speed</span>
+                <span className="font-display font-extrabold text-base text-[#1C2321] block">4.8 Hours Avg</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column (5 cols): Live Agritech Terminal & Direct Quick Connect */}
+          <div className="lg:col-span-5 w-full">
+            <div className="glass-card-dark p-6 sm:p-7 rounded-[28px] space-y-5 relative overflow-hidden border border-emerald-400/30">
+              
+              {/* Header with Live Status Tag */}
+              <div className="flex items-center justify-between pb-3 border-b border-white/10">
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#4ADE80] animate-ping" />
+                  <span className="text-xs font-bold text-[#4ADE80] uppercase tracking-wider font-mono">
+                    Live Clearing Corridor
+                  </span>
+                </div>
+                <span className="text-[11px] text-white/60 font-mono">
+                  Kolar ⇄ Bengaluru
+                </span>
+              </div>
+
+              {/* Trade Spotlight */}
+              <div className="bg-white/5 border border-white/10 p-4 rounded-[20px] backdrop-blur-md space-y-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <span className="text-[11px] uppercase tracking-wider text-emerald-400 font-bold block">
+                      Active Contract Escrow
+                    </span>
+                    <h3 className="font-display font-bold text-base text-white">
+                      Hybrid Roma Tomatoes (Grade A)
+                    </h3>
+                  </div>
+                  <span className="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-bold border border-emerald-400/30">
+                    2,500 kg
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 pt-1 text-xs">
+                  <div className="bg-black/30 p-2.5 rounded-[14px] border border-white/5">
+                    <span className="text-[10px] text-white/60 block">Agridirect Fixed</span>
+                    <span className="font-bold text-base text-[#4ADE80]">₹38.00 / kg</span>
+                  </div>
+                  <div className="bg-black/30 p-2.5 rounded-[14px] border border-white/5">
+                    <span className="text-[10px] text-white/60 block">Mandi Spot Rate</span>
+                    <span className="font-bold text-base text-[#F87171] line-through opacity-85">₹24.50 / kg</span>
+                  </div>
+                </div>
+
+                {/* 30-min window progress indicator */}
+                <div className="pt-1">
+                  <div className="flex items-center justify-between text-[11px] mb-1.5">
+                    <span className="text-white/70 flex items-center gap-1">
+                      <Clock size={12} className="text-amber-400" />
+                      Locked Acceptance Window:
+                    </span>
+                    <span className="font-mono font-bold text-amber-400 animate-pulse">
+                      00:24:18 left
+                    </span>
+                  </div>
+                  <div className="w-full h-1.5 rounded-full bg-white/10 overflow-hidden">
+                    <div className="h-full bg-gradient-to-r from-emerald-400 to-amber-400 rounded-full w-4/5" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Direct 1-Click Google Sign-In Callout */}
+              <div className="space-y-2.5 pt-1">
                 <button
                   type="button"
                   onClick={() => onOpenAuth('login')}
-                  className="px-4 py-3.5 text-[#5B6660] hover:text-[#1C2321] font-bold text-sm cursor-pointer hover:underline"
+                  className="w-full h-12 rounded-[18px] bg-white hover:bg-gray-100 text-[#1C2321] font-bold text-xs sm:text-sm flex items-center justify-center gap-3 transition-all shadow-md cursor-pointer hover:scale-[1.01]"
                 >
-                  Already registered? Sign In &rarr;
+                  <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
+                  </svg>
+                  <span>Quick Connect with Google</span>
                 </button>
-              </>
-            )}
+
+                {/* 3 Quick Role Selection Pills */}
+                <div className="grid grid-cols-3 gap-2 pt-1 text-center">
+                  <button
+                    type="button"
+                    onClick={() => onOpenAuth('login', 'farmer')}
+                    className="p-2 rounded-[14px] bg-white/10 hover:bg-white/20 border border-white/10 text-[11px] font-bold text-white transition-colors cursor-pointer"
+                  >
+                    🌾 Farmer
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => onOpenAuth('login', 'buyer')}
+                    className="p-2 rounded-[14px] bg-white/10 hover:bg-white/20 border border-white/10 text-[11px] font-bold text-white transition-colors cursor-pointer"
+                  >
+                    🏢 Buyer
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => onOpenAuth('login', 'logistics')}
+                    className="p-2 rounded-[14px] bg-white/10 hover:bg-white/20 border border-white/10 text-[11px] font-bold text-white transition-colors cursor-pointer"
+                  >
+                    🚚 Fleet
+                  </button>
+                </div>
+              </div>
+
+              {/* Trust Subtext */}
+              <div className="text-[11px] text-white/60 flex items-center justify-between pt-1 border-t border-white/10">
+                <span className="flex items-center gap-1.5">
+                  <ShieldCheck size={14} className="text-emerald-400" />
+                  AES-256 Escrow Protected
+                </span>
+                <span>±5% Damage Buffer</span>
+              </div>
+
+            </div>
           </div>
 
-          {/* Key Metric Highlights in Tactile Sunken Clay Badges */}
-          <div className="pt-6 border-t border-[#DDD9CD]/70 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-            <div className="clay-sunken p-3">
-              <span className="text-[10px] uppercase font-bold text-[#5B6660] block mb-0.5">Procurement Flow</span>
-              <span className="font-display font-extrabold text-base text-[#1C2321] block">48.5 MT / Mo</span>
-            </div>
-            <div className="clay-sunken p-3">
-              <span className="text-[10px] uppercase font-bold text-[#5B6660] block mb-0.5">Farmer Margin</span>
-              <span className="font-display font-extrabold text-base text-[#2E7D4F] block">+19.4% Premium</span>
-            </div>
-            <div className="clay-sunken p-3">
-              <span className="text-[10px] uppercase font-bold text-[#5B6660] block mb-0.5">Damage Buffer</span>
-              <span className="font-display font-extrabold text-base text-[#C77B2E] block">±5% Tolerance</span>
-            </div>
-            <div className="clay-sunken p-3">
-              <span className="text-[10px] uppercase font-bold text-[#5B6660] block mb-0.5">Clearing Speed</span>
-              <span className="font-display font-extrabold text-base text-[#1C2321] block">4.8 Hours Avg</span>
-            </div>
-          </div>
         </div>
       </div>
 
       {/* Interactive Visual Graph: Market Economics & Mandi Volatility Comparison */}
-      <div className="clay-card p-6 sm:p-8 space-y-6">
+      <div className="glass-card p-6 sm:p-8 space-y-6 rounded-[28px] border border-white/85 shadow-lg">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className="clay-badge bg-[#EAF0E7] text-[#2F5233]">LIVE MARKET ANALYTICS</span>
-              <span className="text-[11px] text-[#5B6660] font-mono">APMC Mandi vs Agree Direct Contract</span>
+              <span className="glass-pill bg-[#EAF0E7] text-[#2F5233] px-3 py-1 rounded-full text-[11px] font-extrabold border border-[#2F5233]/20">
+                LIVE MARKET ANALYTICS
+              </span>
+              <span className="text-[11px] text-[#5B6660] font-mono">APMC Mandi vs Agridirect Contract</span>
             </div>
             <h2 className="font-display font-extrabold text-xl sm:text-2xl text-[#1C2321]">
               Predictable Pricing Curve vs. Mandi Volatility
             </h2>
-            <p className="text-xs text-[#5B6660] max-w-xl">
-              While conventional wholesale mandis fluctuate up to 60% in a single week, Agree Direct locks guaranteed fair contract pricing with ±5% transit tolerance.
+            <p className="text-xs sm:text-sm text-[#5B6660] max-w-xl">
+              While conventional wholesale mandis fluctuate up to 60% in a single week, Agridirect locks guaranteed fair contract pricing with ±5% transit tolerance.
             </p>
           </div>
 
           {/* Graph Metric Tab Switcher */}
-          <div className="clay-sunken p-1 flex rounded-[16px] self-start sm:self-auto">
+          <div className="bg-white/80 backdrop-blur-sm border border-white/90 p-1 flex rounded-[18px] self-start sm:self-auto shadow-2xs">
             <button
               type="button"
               onClick={() => setActiveGraphMetric('price')}
-              className={`px-3 py-1.5 rounded-[12px] text-xs font-bold transition-all cursor-pointer ${
-                activeGraphMetric === 'price' ? 'clay-button-primary !py-1 !px-3 text-xs' : 'text-[#5B6660]'
+              className={`px-3 py-1.5 rounded-[14px] text-xs font-bold transition-all cursor-pointer ${
+                activeGraphMetric === 'price' ? 'bg-[#2F5233] text-white shadow-sm' : 'text-[#5B6660] hover:text-[#1C2321]'
               }`}
             >
               Price Realization (₹/kg)
@@ -178,8 +301,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             <button
               type="button"
               onClick={() => setActiveGraphMetric('profit')}
-              className={`px-3 py-1.5 rounded-[12px] text-xs font-bold transition-all cursor-pointer ${
-                activeGraphMetric === 'profit' ? 'clay-button-primary !py-1 !px-3 text-xs' : 'text-[#5B6660]'
+              className={`px-3 py-1.5 rounded-[14px] text-xs font-bold transition-all cursor-pointer ${
+                activeGraphMetric === 'profit' ? 'bg-[#2F5233] text-white shadow-sm' : 'text-[#5B6660] hover:text-[#1C2321]'
               }`}
             >
               Net Margin (%)
@@ -187,8 +310,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             <button
               type="button"
               onClick={() => setActiveGraphMetric('volume')}
-              className={`px-3 py-1.5 rounded-[12px] text-xs font-bold transition-all cursor-pointer ${
-                activeGraphMetric === 'volume' ? 'clay-button-primary !py-1 !px-3 text-xs' : 'text-[#5B6660]'
+              className={`px-3 py-1.5 rounded-[14px] text-xs font-bold transition-all cursor-pointer ${
+                activeGraphMetric === 'volume' ? 'bg-[#2F5233] text-white shadow-sm' : 'text-[#5B6660] hover:text-[#1C2321]'
               }`}
             >
               Fulfillment Volume (MT)
@@ -196,8 +319,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           </div>
         </div>
 
-        {/* Recharts Area Chart Container with Sunken Clay Well */}
-        <div className="clay-sunken p-4 sm:p-6 rounded-[20px] bg-[#FAF9F5]">
+        {/* Recharts Area Chart Container with Frosted Well */}
+        <div className="p-4 sm:p-6 rounded-[24px] bg-white/60 backdrop-blur-md border border-white/90 shadow-2xs">
           <div className="h-72 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={MARKET_TREND_DATA} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
@@ -216,21 +339,22 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                 <YAxis stroke="#5B6660" fontSize={12} tickLine={false} />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#FFFFFF',
-                    borderRadius: '14px',
+                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                    backdropFilter: 'blur(12px)',
+                    borderRadius: '16px',
                     border: '1px solid rgba(255,255,255,0.8)',
-                    boxShadow: '6px 10px 20px rgba(0,0,0,0.08)',
+                    boxShadow: '0 12px 30px rgba(0,0,0,0.08)',
                     fontSize: '12px',
                     fontWeight: 600,
                   }}
                   formatter={(value: any, name: any) => [
                     `${value} ${activeGraphMetric === 'volume' ? 'MT' : '₹/kg'}`,
-                    name === 'agreeDirectPrice' ? 'Agree Direct Contract' : name === 'apmcPrice' ? 'APMC Mandi Spot' : name
+                    name === 'agreeDirectPrice' ? 'Agridirect Contract' : name === 'apmcPrice' ? 'APMC Mandi Spot' : name
                   ]}
                 />
                 <Legend
                   wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }}
-                  formatter={(value) => (value === 'agreeDirectPrice' ? 'Agree Direct Locked Contract Price' : 'Unstable Mandi Spot Price')}
+                  formatter={(value) => (value === 'agreeDirectPrice' ? 'Agridirect Locked Contract Price' : 'Unstable Mandi Spot Price')}
                 />
                 <Area
                   type="monotone"
@@ -273,26 +397,26 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       </div>
 
       {/* Stakeholder Onboarding Cards: For all 3 roles (Farmer, Buyer, Logistics) */}
-      <div className="space-y-4">
+      <div className="space-y-5">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="font-display font-extrabold text-2xl text-[#1C2321]">
               Engineered for Every Agricultural Stakeholder
             </h2>
-            <p className="text-xs text-[#5B6660]">
+            <p className="text-xs sm:text-sm text-[#5B6660]">
               Select your operational desk to explore specialized workflows or launch verified access
             </p>
           </div>
-          <span className="text-xs font-bold text-[#2F5233] bg-[#EAF0E7] px-3 py-1 rounded-full hidden sm:inline">
-            Karnataka Agricultural Network
+          <span className="text-xs font-bold text-[#2F5233] bg-[#EAF0E7] px-3.5 py-1.5 rounded-full hidden sm:inline border border-[#2F5233]/20">
+            Karnataka Agricultural Corridor
           </span>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Farmer Card */}
-          <div className="clay-card-interactive clay-card-sage p-6 flex flex-col justify-between group">
-            <div className="space-y-3.5">
-              <div className="w-12 h-12 rounded-[16px] bg-[#2F5233] text-white flex items-center justify-center shadow-sm">
+          <div className="glass-card-sage p-6 sm:p-7 rounded-[26px] flex flex-col justify-between group border border-emerald-300/40 shadow-md hover:shadow-lg transition-all">
+            <div className="space-y-4">
+              <div className="w-12 h-12 rounded-[18px] bg-[#2F5233] text-white flex items-center justify-center shadow-md">
                 <Tractor size={24} />
               </div>
               <h3 className="font-display font-extrabold text-xl text-[#1C2321] group-hover:text-[#2F5233] transition-colors">
@@ -317,18 +441,18 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               </ul>
             </div>
 
-            <div className="mt-6 pt-4 border-t border-[#DDD9CD]/60 flex items-center gap-2">
+            <div className="mt-6 pt-4 border-t border-[#2F5233]/20 flex items-center gap-2">
               <button
                 type="button"
                 onClick={() => onOpenAuth('signup', 'farmer')}
-                className="clay-button-primary flex-1 py-2.5 text-xs font-bold cursor-pointer"
+                className="clay-button-primary flex-1 py-2.5 text-xs font-bold cursor-pointer rounded-[14px]"
               >
                 Join as Farmer
               </button>
               <button
                 type="button"
                 onClick={() => onOpenAuth('login', 'farmer')}
-                className="clay-button-secondary px-3 py-2.5 text-xs font-bold cursor-pointer"
+                className="clay-button-secondary px-3.5 py-2.5 text-xs font-bold cursor-pointer rounded-[14px]"
               >
                 Sign In
               </button>
@@ -336,9 +460,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           </div>
 
           {/* Buyer Card */}
-          <div className="clay-card-interactive clay-card-terracotta p-6 flex flex-col justify-between group">
-            <div className="space-y-3.5">
-              <div className="w-12 h-12 rounded-[16px] bg-[#C77B2E] text-white flex items-center justify-center shadow-sm">
+          <div className="glass-card-terracotta p-6 sm:p-7 rounded-[26px] flex flex-col justify-between group border border-amber-300/40 shadow-md hover:shadow-lg transition-all">
+            <div className="space-y-4">
+              <div className="w-12 h-12 rounded-[18px] bg-[#C77B2E] text-white flex items-center justify-center shadow-md">
                 <Building2 size={24} />
               </div>
               <h3 className="font-display font-extrabold text-xl text-[#1C2321] group-hover:text-[#C77B2E] transition-colors">
@@ -363,18 +487,18 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               </ul>
             </div>
 
-            <div className="mt-6 pt-4 border-t border-[#DDD9CD]/60 flex items-center gap-2">
+            <div className="mt-6 pt-4 border-t border-[#C77B2E]/20 flex items-center gap-2">
               <button
                 type="button"
                 onClick={() => onOpenAuth('signup', 'buyer')}
-                className="clay-button-accent flex-1 py-2.5 text-xs font-bold cursor-pointer"
+                className="clay-button-accent flex-1 py-2.5 text-xs font-bold cursor-pointer rounded-[14px]"
               >
                 Register as Buyer
               </button>
               <button
                 type="button"
                 onClick={() => onOpenAuth('login', 'buyer')}
-                className="clay-button-secondary px-3 py-2.5 text-xs font-bold cursor-pointer"
+                className="clay-button-secondary px-3.5 py-2.5 text-xs font-bold cursor-pointer rounded-[14px]"
               >
                 Sign In
               </button>
@@ -382,9 +506,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           </div>
 
           {/* Logistics Fleet Card */}
-          <div className="clay-card-interactive clay-card bg-[#EBF3FA] p-6 flex flex-col justify-between group border border-white/80">
-            <div className="space-y-3.5">
-              <div className="w-12 h-12 rounded-[16px] bg-[#3B6FA0] text-white flex items-center justify-center shadow-sm">
+          <div className="glass-card-sapphire p-6 sm:p-7 rounded-[26px] flex flex-col justify-between group border border-sky-300/40 shadow-md hover:shadow-lg transition-all">
+            <div className="space-y-4">
+              <div className="w-12 h-12 rounded-[18px] bg-[#3B6FA0] text-white flex items-center justify-center shadow-md">
                 <Truck size={24} />
               </div>
               <h3 className="font-display font-extrabold text-xl text-[#1C2321] group-hover:text-[#3B6FA0] transition-colors">
@@ -409,18 +533,18 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               </ul>
             </div>
 
-            <div className="mt-6 pt-4 border-t border-[#DDD9CD]/60 flex items-center gap-2">
+            <div className="mt-6 pt-4 border-t border-[#3B6FA0]/20 flex items-center gap-2">
               <button
                 type="button"
                 onClick={() => onOpenAuth('signup', 'logistics')}
-                className="clay-button-secondary !bg-[#3B6FA0] !text-white flex-1 py-2.5 text-xs font-bold cursor-pointer"
+                className="clay-button-secondary !bg-[#3B6FA0] !text-white flex-1 py-2.5 text-xs font-bold cursor-pointer rounded-[14px]"
               >
                 Onboard Fleet
               </button>
               <button
                 type="button"
                 onClick={() => onOpenAuth('login', 'logistics')}
-                className="clay-button-secondary px-3 py-2.5 text-xs font-bold cursor-pointer"
+                className="clay-button-secondary px-3.5 py-2.5 text-xs font-bold cursor-pointer rounded-[14px]"
               >
                 Sign In
               </button>
@@ -430,7 +554,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       </div>
 
       {/* Public Demands Exchange Board Preview */}
-      <div className="clay-card p-6 sm:p-8 space-y-4">
+      <div className="glass-card p-6 sm:p-8 space-y-5 rounded-[28px] border border-white/85 shadow-lg">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
           <div>
             <h2 className="font-display font-extrabold text-xl text-[#1C2321] flex items-center gap-2">
@@ -438,7 +562,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               <span>Live Commercial Procurement Demands Board</span>
             </h2>
             <p className="text-xs text-[#5B6660]">
-              Active purchase orders posted by institutional buyers seeking immediate farmgate supply on Agree Direct
+              Active purchase orders posted by institutional buyers seeking immediate farmgate supply on Agridirect
             </p>
           </div>
           <button
@@ -451,15 +575,15 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           </button>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-1">
           {publicDemands.map((demand) => (
             <div
               key={demand.id}
-              className="clay-sunken p-4 space-y-3 hover:scale-[1.01] transition-transform"
+              className="bg-white/75 backdrop-blur-md border border-white/90 p-4 rounded-[20px] space-y-3 hover:shadow-md hover:scale-[1.01] transition-all"
             >
               <div className="flex items-center justify-between">
                 <span className="font-bold text-sm text-[#1C2321]">{demand.commodity}</span>
-                <span className="clay-badge bg-white text-[#2F5233] text-[10px]">
+                <span className="px-2 py-0.5 rounded-full bg-[#EAF0E7] text-[#2F5233] text-[10px] font-bold border border-[#2F5233]/20">
                   {demand.quality_requirement}
                 </span>
               </div>
@@ -488,7 +612,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               <button
                 type="button"
                 onClick={() => onOpenAuth('login', 'farmer')}
-                className="clay-button-secondary w-full mt-2 py-2 text-xs font-bold text-[#2F5233] flex items-center justify-center gap-1 cursor-pointer"
+                className="clay-button-secondary w-full mt-2 py-2 text-xs font-bold text-[#2F5233] flex items-center justify-center gap-1 cursor-pointer rounded-[14px]"
               >
                 <span>Sign In to Respond &rarr;</span>
               </button>

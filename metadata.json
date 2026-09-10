@@ -1,6 +1,6 @@
 {
-  "name": "Agree Direct",
-  "description": "Agree Direct — Premium demand-first agricultural procurement platform with real-time market trends, machine learning crop advisory, and multi-farmer supply clearing.",
+  "name": "Agridirect",
+  "description": "Agridirect — Premium demand-first agricultural procurement platform with real-time market trends, machine learning crop advisory, and multi-farmer supply clearing.",
   "requestFramePermissions": ["camera"],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

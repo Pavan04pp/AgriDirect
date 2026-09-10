@@ -163,14 +163,14 @@ export const MarketTrendsModal: React.FC<MarketTrendsModalProps> = ({
                 </h2>
                 <span className="hidden sm:inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#E4ECE0] text-[#2F5233]">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                  Live APMC & Agree Direct Data
+                  Live APMC & Agridirect Data
                 </span>
               </div>
               <p className="text-xs text-[#5B6660]">
                 {isLogistics
                   ? 'Real-time mandi benchmark rates, peak pricing, and active trade demand volumes across agricultural freight corridors.'
                   : isBuyer
-                  ? 'Compare real-time mandi prices with Agree Direct contracts, monitor peak thresholds and volume availability.'
+                  ? 'Compare real-time mandi prices with Agridirect contracts, monitor peak thresholds and volume availability.'
                   : 'Compare peak prices, real-time demand volumes, market gluts, and AI-predicted profitable crops.'}
               </p>
             </div>
@@ -180,21 +180,22 @@ export const MarketTrendsModal: React.FC<MarketTrendsModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="w-9 h-9 rounded-full bg-[#EFEDE6] hover:bg-[#DDD9CD] text-[#5B6660] hover:text-[#1C2321] flex items-center justify-center transition-colors cursor-pointer"
+              className="w-10 h-10 min-h-[44px] min-w-[44px] rounded-full bg-[#EFEDE6] hover:bg-[#DDD9CD] text-[#5B6660] hover:text-[#1C2321] flex items-center justify-center transition-colors cursor-pointer"
               title="Close modal"
+              aria-label="Close modal"
             >
-              <X size={18} />
+              <X size={20} />
             </button>
           </div>
         </div>
 
         {/* Top Navigation Tabs */}
-        <div className="px-5 sm:px-6 pt-3 bg-white border-b border-[#DDD9CD] flex items-center justify-between flex-wrap gap-2">
-          <div className="flex items-center gap-2">
+        <div className="px-4 sm:px-6 pt-2.5 bg-white border-b border-[#DDD9CD] flex items-center justify-between flex-wrap gap-2 overflow-x-auto">
+          <div className="flex items-center gap-2 overflow-x-auto pb-0.5">
             <button
               type="button"
               onClick={() => setActiveTab('trends')}
-              className={`px-4 py-2 text-xs sm:text-sm font-bold border-b-2 transition-all flex items-center gap-2 cursor-pointer ${
+              className={`min-h-[44px] px-3.5 sm:px-4 py-2 text-xs sm:text-sm font-bold border-b-2 whitespace-nowrap transition-all flex items-center gap-2 cursor-pointer ${
                 activeTab === 'trends'
                   ? 'border-[#2F5233] text-[#2F5233] bg-[#FAF9F5] rounded-t-[10px]'
                   : 'border-transparent text-[#5B6660] hover:text-[#1C2321]'
@@ -208,7 +209,7 @@ export const MarketTrendsModal: React.FC<MarketTrendsModalProps> = ({
               <button
                 type="button"
                 onClick={() => setActiveTab('ml_suggestions')}
-                className={`px-4 py-2 text-xs sm:text-sm font-bold border-b-2 transition-all flex items-center gap-2 cursor-pointer ${
+                className={`min-h-[44px] px-3.5 sm:px-4 py-2 text-xs sm:text-sm font-bold border-b-2 whitespace-nowrap transition-all flex items-center gap-2 cursor-pointer ${
                   activeTab === 'ml_suggestions'
                     ? 'border-[#2F5233] text-[#2F5233] bg-[#FAF9F5] rounded-t-[10px]'
                     : 'border-transparent text-[#5B6660] hover:text-[#1C2321]'
@@ -217,8 +218,8 @@ export const MarketTrendsModal: React.FC<MarketTrendsModalProps> = ({
                 <Sprout size={16} className="text-[#2F5233]" />
                 <span>
                   {isBuyer
-                    ? 'Agricultural Supply Forecast (ML Engine)'
-                    : 'Farmer Suggestions (ML Demand Engine)'}
+                    ? 'Agricultural Supply Forecast'
+                    : 'Farmer Suggestions (ML Demand)'}
                 </span>
                 <span className="text-[10px] px-1.5 py-0.2 bg-[#F6E7D3] text-[#C77B2E] rounded-full font-extrabold uppercase">
                   AI Model
@@ -338,11 +339,11 @@ export const MarketTrendsModal: React.FC<MarketTrendsModalProps> = ({
                   </div>
 
                   {/* Graph Metric Toggle */}
-                  <div className="inline-flex rounded-[10px] bg-[#EFEDE6] p-1 border border-[#DDD9CD]">
+                  <div className="flex flex-wrap items-center gap-1 p-1 rounded-[12px] bg-[#EFEDE6] border border-[#DDD9CD]">
                     <button
                       type="button"
                       onClick={() => setTrendMetric('demand')}
-                      className={`px-3 py-1.5 rounded-[8px] text-xs font-bold transition-all ${
+                      className={`min-h-[38px] px-3 py-1.5 rounded-[8px] text-xs font-bold transition-all flex items-center gap-1 cursor-pointer ${
                         trendMetric === 'demand'
                           ? 'bg-[#2F5233] text-white shadow-xs'
                           : 'text-[#5B6660] hover:text-[#1C2321]'
@@ -353,18 +354,18 @@ export const MarketTrendsModal: React.FC<MarketTrendsModalProps> = ({
                     <button
                       type="button"
                       onClick={() => setTrendMetric('prices')}
-                      className={`px-3 py-1.5 rounded-[8px] text-xs font-bold transition-all ${
+                      className={`min-h-[38px] px-3 py-1.5 rounded-[8px] text-xs font-bold transition-all flex items-center gap-1 cursor-pointer ${
                         trendMetric === 'prices'
                           ? 'bg-[#2F5233] text-white shadow-xs'
                           : 'text-[#5B6660] hover:text-[#1C2321]'
                       }`}
                     >
-                      💰 Trade vs Peak vs Direct (₹/kg)
+                      💰 Trade vs Peak vs Direct
                     </button>
                     <button
                       type="button"
                       onClick={() => setTrendMetric('selling_point')}
-                      className={`px-3 py-1.5 rounded-[8px] text-xs font-bold transition-all ${
+                      className={`min-h-[38px] px-3 py-1.5 rounded-[8px] text-xs font-bold transition-all flex items-center gap-1 cursor-pointer ${
                         trendMetric === 'selling_point'
                           ? 'bg-[#2F5233] text-white shadow-xs'
                           : 'text-[#5B6660] hover:text-[#1C2321]'
@@ -1072,7 +1073,7 @@ export const MarketTrendsModal: React.FC<MarketTrendsModalProps> = ({
                   </h4>
                 </div>
                 <p className="text-xs text-[#B3412C] leading-relaxed">
-                  The model strongly advises <strong>pausing production of Bottle Gourd (Lauki) and White Cauliflower</strong> for this sowing window. Over 420% regional oversupply has resulted in zero buyer contracts on Agree Direct and wholesale prices collapsing below ₹6/kg in nearby APMC mandis.
+                  The model strongly advises <strong>pausing production of Bottle Gourd (Lauki) and White Cauliflower</strong> for this sowing window. Over 420% regional oversupply has resulted in zero buyer contracts on Agridirect and wholesale prices collapsing below ₹6/kg in nearby APMC mandis.
                 </p>
               </div>
             </div>
@@ -1082,7 +1083,7 @@ export const MarketTrendsModal: React.FC<MarketTrendsModalProps> = ({
         {/* Modal Footer */}
         <div className="px-5 sm:px-6 py-3 bg-white border-t border-[#DDD9CD] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
           <div className="text-[#5B6660]">
-            Agree Direct Data Intelligence • Model v3.4 • Updated Hourly from APMC Mandi Ingress & Buyer Bids
+            Agridirect Data Intelligence • Model v3.4 • Updated Hourly from APMC Mandi Ingress & Buyer Bids
           </div>
 
           <button
