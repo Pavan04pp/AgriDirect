@@ -21,7 +21,8 @@ import {
   HelpCircle,
   Clock,
   Droplets,
-  Award
+  Award,
+  Activity
 } from 'lucide-react';
 import {
   ResponsiveContainer,
@@ -41,6 +42,7 @@ import {
   ML_CROP_SUGGESTIONS,
   calculateCustomCropRecommendation
 } from '../../data/marketTrendsData';
+import { MLPriceVariationPredictor } from '../ml/MLPriceVariationPredictor';
 
 interface MarketTrendsModalProps {
   isOpen: boolean;
@@ -61,7 +63,7 @@ export const MarketTrendsModal: React.FC<MarketTrendsModalProps> = ({
   const isFarmer = currentUser?.role === 'farmer' || currentUser?.role === 'admin';
 
   const safeInitialTab = isLogistics ? 'trends' : initialTab;
-  const [activeTab, setActiveTab] = useState<'trends' | 'ml_suggestions'>(safeInitialTab);
+  const [activeTab, setActiveTab] = useState<'trends' | 'ml_suggestions' | 'price_forecast'>(safeInitialTab);
   const [trendMetric, setTrendMetric] = useState<'demand' | 'prices' | 'selling_point'>('demand');
   const [requirementFilter, setRequirementFilter] = useState<'all' | 'high' | 'not_at_peak' | 'no_demand'>('all');
   const [selectedProduct, setSelectedProduct] = useState<MarketTrendProduct | null>(null);
@@ -203,6 +205,22 @@ export const MarketTrendsModal: React.FC<MarketTrendsModalProps> = ({
             >
               <BarChart3 size={16} />
               <span>{isLogistics ? 'Freight & Market Trends' : 'Current Market Trends & Graphs'}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveTab('price_forecast')}
+              className={`min-h-[44px] px-3.5 sm:px-4 py-2 text-xs sm:text-sm font-bold border-b-2 whitespace-nowrap transition-all flex items-center gap-2 cursor-pointer ${
+                activeTab === 'price_forecast'
+                  ? 'border-[#2F5233] text-[#2F5233] bg-[#FAF9F5] rounded-t-[10px]'
+                  : 'border-transparent text-[#5B6660] hover:text-[#1C2321]'
+              }`}
+            >
+              <Activity size={16} className="text-[#2F5233]" />
+              <span>Algorithmic Price Forecast & Curves</span>
+              <span className="text-[10px] px-1.5 py-0.2 bg-[#E4ECE0] text-[#2F5233] rounded-full font-extrabold uppercase">
+                Regression
+              </span>
             </button>
 
             {!isLogistics && (
@@ -769,6 +787,15 @@ export const MarketTrendsModal: React.FC<MarketTrendsModalProps> = ({
                   })}
                 </div>
               </div>
+            </div>
+          )}
+
+          {/* =========================================================================
+              TAB: ALGORITHMIC PRICE VARIATION & FORECAST
+             ========================================================================= */}
+          {activeTab === 'price_forecast' && (
+            <div className="space-y-6">
+              <MLPriceVariationPredictor />
             </div>
           )}
 

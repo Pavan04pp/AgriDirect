@@ -15,8 +15,10 @@ import {
   ArrowRight,
   Clock,
   RotateCcw,
-  FastForward
+  FastForward,
+  Sliders
 } from 'lucide-react';
+import { FarmerAllocationOptimizer } from '../ml/FarmerAllocationOptimizer';
 
 interface MatchingReviewModalProps {
   demand: Demand;
@@ -37,10 +39,12 @@ export const MatchingReviewModal: React.FC<MatchingReviewModalProps> = ({
     confirmMatch,
     rejectMatch,
     farmerProfiles,
+    applications,
     getDemandTimer,
     expireDemandTimerNow,
     resetDemandTimer
   } = useApp();
+  const [viewMode, setViewMode] = useState<'overview' | 'optimizer'>('overview');
   const [rejectReason, setRejectReason] = useState('');
   const [showRejectForm, setShowRejectForm] = useState(false);
   const [confirming, setConfirming] = useState(false);
@@ -264,8 +268,51 @@ export const MatchingReviewModal: React.FC<MatchingReviewModalProps> = ({
             )}
           </div>
           
-          {/* Left Column (col-span-12 lg:col-span-8) */}
-          <div className="col-span-12 lg:col-span-8 flex flex-col gap-6">
+          {/* Sub-view Switcher: Overview vs Multi-Factor Utility Model */}
+          <div className="col-span-12 flex items-center justify-between flex-wrap gap-2 border-b border-[#DDD9CD] pb-2">
+            <div className="flex items-center gap-2 bg-[#EFEDE6] p-1 rounded-[10px] border border-[#DDD9CD]">
+              <button
+                type="button"
+                onClick={() => setViewMode('overview')}
+                className={`px-3.5 py-1.5 rounded-[8px] text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                  viewMode === 'overview'
+                    ? 'bg-white text-[#2F5233] shadow-xs'
+                    : 'text-[#5B6660] hover:text-[#1C2321]'
+                }`}
+              >
+                <Layers size={14} />
+                <span>Aggregated Fulfillment & Route</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode('optimizer')}
+                className={`px-3.5 py-1.5 rounded-[8px] text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                  viewMode === 'optimizer'
+                    ? 'bg-white text-[#2F5233] shadow-xs'
+                    : 'text-[#5B6660] hover:text-[#1C2321]'
+                }`}
+              >
+                <Sliders size={14} />
+                <span>Multi-Factor Utility Decision Optimizer</span>
+                <span className="text-[10px] px-1.5 py-0.2 bg-[#E4ECE0] text-[#2F5233] rounded-full font-extrabold uppercase">
+                  Algorithm
+                </span>
+              </button>
+            </div>
+          </div>
+
+          {viewMode === 'optimizer' ? (
+            <div className="col-span-12">
+              <FarmerAllocationOptimizer
+                demand={demand}
+                applications={applications.filter((a) => a.demand_id === demand.id)}
+                farmerProfiles={farmerProfiles}
+              />
+            </div>
+          ) : (
+            <>
+              {/* Left Column (col-span-12 lg:col-span-8) */}
+              <div className="col-span-12 lg:col-span-8 flex flex-col gap-6">
             
             {/* System Recommended Aggregation Card */}
             <div className="bg-white border border-[#DDD9CD] rounded-[16px] p-6 shadow-none">
@@ -581,6 +628,8 @@ export const MatchingReviewModal: React.FC<MatchingReviewModalProps> = ({
             </div>
 
           </div>
+          </>
+          )}
         </div>
 
       </div>
