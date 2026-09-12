@@ -52,7 +52,7 @@ export function runMatchingEngine(
   // - Must have offered quantity > 0
   // - Farmer must have available quantity > 0
   // - Quality must meet or exceed requirement (Grade A requires Grade A, Grade B accepts Grade A or B)
-  const gradeRank = { 'Grade A': 3, 'Grade B': 2, 'Grade C': 1 };
+  const gradeRank: Record<string, number> = { 'Grade A': 3, 'Grade B': 2, 'Grade C': 1, 'Rejected (Non-Produce)': 0 };
   const minRequiredRank = gradeRank[demand.quality_requirement] || 1;
 
   const validApps = applications.filter((app) => {
@@ -61,9 +61,12 @@ export function runMatchingEngine(
     if (farmer.available_quantity_kg <= 0) return false;
     if (app.offered_quantity <= 0) return false;
 
+    // Reject non-produce uploads (selfies, persons, household items)
+    if (app.quality_assessment?.is_agricultural_produce === false) return false;
+
     // Check grade
     const appGrade = app.quality_assessment?.estimated_grade || 'Grade B';
-    const appGradeRank = gradeRank[appGrade] || 1;
+    const appGradeRank = gradeRank[appGrade] ?? 1;
     if (appGradeRank < minRequiredRank) return false;
 
     return true;

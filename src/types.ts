@@ -110,16 +110,29 @@ export interface FarmerApplication {
   distance_km: number;
 }
 
+export interface ProducePrediction {
+  label: string;
+  score: number;
+}
+
 export interface QualityAssessment {
   id: string;
   application_id?: string;
   farmer_id: string;
   commodity: string;
+  recognized_produce?: string;
+  is_agricultural_produce?: boolean;
+  subject_type?: string;
+  rejection_reason?: string;
+  produce_category?: 'fruit' | 'vegetable' | 'root_crop' | 'leafy_green' | 'other' | 'non_produce';
+  model_source?: string;
+  top_predictions?: ProducePrediction[];
+  ripeness_stage?: string;
   image_reference: string;
-  estimated_grade: 'Grade A' | 'Grade B' | 'Grade C';
+  estimated_grade: 'Grade A' | 'Grade B' | 'Grade C' | 'Rejected (Non-Produce)';
   confidence: number; // 0 to 100
   detected_issues: string[];
-  assessment_status: 'PROTOTYPE_ASSESSED' | 'MANUAL_VERIFICATION_REQUIRED';
+  assessment_status: 'PROTOTYPE_ASSESSED' | 'MANUAL_VERIFICATION_REQUIRED' | 'REJECTED_NON_PRODUCE';
   analyzed_at: string;
   details?: {
     color_uniformity: string;

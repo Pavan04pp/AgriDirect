@@ -101,7 +101,8 @@ interface AppContextType {
   runQualityAssessment: (
     imageRef: string,
     commodity: string,
-    farmerId: string
+    farmerId: string,
+    preferredModel?: 'auto' | 'gemini' | 'huggingface'
   ) => Promise<QualityAssessment>;
 
   updateLogisticsJobStatus: (jobId: string, status: LogisticsJobStatus) => void;
@@ -845,9 +846,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const runQualityAssessment = async (
     imageRef: string,
     commodity: string,
-    farmerId: string
+    farmerId: string,
+    preferredModel: 'auto' | 'gemini' | 'huggingface' = 'auto'
   ): Promise<QualityAssessment> => {
-    const assessment = await analyzeProduceQuality(imageRef, commodity, farmerId);
+    const assessment = await analyzeProduceQuality(imageRef, commodity, farmerId, preferredModel);
     setQualityAssessments((prev) => ({ ...prev, [assessment.id]: assessment }));
     return assessment;
   };

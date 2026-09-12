@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { createServer as createViteServer } from 'vite';
+import { analyzeProduceProduceVision, getVisionModelStatus } from './src/server/produceVisionService';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -9,7 +10,8 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = 3000;
 
-app.use(express.json());
+app.use(express.json({ limit: '25mb' }));
+app.use(express.urlencoded({ extended: true, limit: '25mb' }));
 
 // In-Memory Database Store (ready for backend operations & video presentation)
 interface UserRecord {
@@ -805,6 +807,44 @@ app.get('/api/ml/trending-analytics', (req: Request, res: Response) => {
       { id: '5', commodity: 'Bottle Gourd (Lauki)', trend_velocity: 12, weekly_change: '-23.1%', action: 'AVOID_SOWING' }
     ]
   });
+});
+
+// Produce Computer Vision (CV) Multimodal Recognition & Quality Assessment API
+app.get('/api/cv/model-status', (req: Request, res: Response) => {
+  res.json({
+    success: true,
+    status: getVisionModelStatus()
+  });
+});
+
+app.post('/api/cv/analyze-produce', async (req: Request, res: Response) => {
+  try {
+    const { image, farmerId, preferredModel, commodityHint } = req.body;
+    if (!image) {
+      return res.status(400).json({
+        success: false,
+        error: 'Missing required produce image (data URL or http URL)'
+      });
+    }
+
+    const assessment = await analyzeProduceProduceVision({
+      image,
+      farmerId: farmerId || 'farmer-1',
+      preferredModel: preferredModel || 'auto',
+      commodityHint
+    });
+
+    res.json({
+      success: true,
+      assessment
+    });
+  } catch (err: any) {
+    console.error('Error in /api/cv/analyze-produce:', err);
+    res.status(500).json({
+      success: false,
+      error: err.message || 'Internal computer vision assessment error'
+    });
+  }
 });
 
 // Start Server with Vite Integration

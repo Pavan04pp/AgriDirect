@@ -77,12 +77,14 @@ export function calculateFarmerUtility(
     (weights.quality + weights.distance + weights.quantity_fit + weights.reliability + weights.price + weights.freshness) || 100;
 
   // 1. QUALITY FACTOR (0 to 100)
+  const isNonProduce = application.quality_assessment?.is_agricultural_produce === false;
   const grade = application.quality_assessment?.estimated_grade || 'Grade A';
   const confidence = (application.quality_assessment?.confidence || 90) / 100;
   const blemishes = application.quality_assessment?.details?.blemishes_percent || 2;
   
   let baseQuality = 80;
-  if (grade === 'Grade A') baseQuality = 98;
+  if (isNonProduce || grade === 'Rejected (Non-Produce)') baseQuality = 0;
+  else if (grade === 'Grade A') baseQuality = 98;
   else if (grade === 'Grade B') baseQuality = 78;
   else baseQuality = 55;
 

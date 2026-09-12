@@ -14,6 +14,8 @@ interface QualityScanModalProps {
 export const QualityScanModal: React.FC<QualityScanModalProps> = ({
   isOpen,
   onClose,
+  commodity,
+  farmerId,
   onAssessmentCompleted,
 }) => {
   if (!isOpen) return null;
@@ -49,6 +51,8 @@ export const QualityScanModal: React.FC<QualityScanModalProps> = ({
         {/* Modal Body */}
         <div className="p-6 overflow-y-auto flex-1">
           <QualityAssessmentView
+            commodity={commodity}
+            farmerId={farmerId}
             onAssessmentCompleted={(assessment) => {
               if (onAssessmentCompleted) {
                 onAssessmentCompleted(assessment);

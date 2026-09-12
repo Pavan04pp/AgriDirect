@@ -117,6 +117,13 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, size = 'md', c
       Icon = XCircle;
       label = status === 'UNFULFILLED' ? 'Unfulfilled' : label;
       break;
+    case 'REJECTED_NON_PRODUCE':
+      bgStyle = 'bg-[#FBEBE8]';
+      textStyle = 'text-[#B3412C]';
+      borderStyle = 'border-[#B3412C]/40';
+      Icon = XCircle;
+      label = 'Rejected (Non-Produce)';
+      break;
     case 'PROTOTYPE_AI':
       bgStyle = 'bg-[#F6E7D3]';
       textStyle = 'text-[#C77B2E]';
