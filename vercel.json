@@ -1,0 +1,18 @@
+{
+  "version": 2,
+  "outputDirectory": "dist",
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api"
+    },
+    {
+      "source": "/auth/callback",
+      "destination": "/api"
+    },
+    {
+      "source": "/((?!api/|auth/callback).*)",
+      "destination": "/index.html"
+    }
+  ]
+}

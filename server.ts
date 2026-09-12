@@ -4,14 +4,30 @@ import { fileURLToPath } from 'url';
 import { createServer as createViteServer } from 'vite';
 import { analyzeProduceProduceVision, getVisionModelStatus } from './src/server/produceVisionService';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const currentDir = typeof __dirname !== 'undefined' ? __dirname : path.dirname(fileURLToPath(import.meta.url || 'file://' + process.cwd() + '/server.ts'));
 
 const app = express();
 const PORT = 3000;
 
+app.set('trust proxy', 1);
 app.use(express.json({ limit: '25mb' }));
 app.use(express.urlencoded({ extended: true, limit: '25mb' }));
+
+// Helper to determine the public URL of the application across Vercel, Cloud Run, and local
+function getAppUrl(req: Request): string {
+  if (process.env.APP_URL && process.env.APP_URL.trim() !== '') {
+    return process.env.APP_URL.replace(/\/$/, '');
+  }
+  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
+    return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`.replace(/\/$/, '');
+  }
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`.replace(/\/$/, '');
+  }
+  const proto = (req.headers['x-forwarded-proto'] as string) || req.protocol || 'http';
+  const host = (req.headers['x-forwarded-host'] as string) || req.get('host') || 'localhost:3000';
+  return `${proto}://${host}`.replace(/\/$/, '');
+}
 
 // In-Memory Database Store (ready for backend operations & video presentation)
 interface UserRecord {
@@ -203,7 +219,7 @@ app.get('/api/health', (req: Request, res: Response) => {
 // Get Google OAuth Authorization URL
 app.get('/api/auth/google/url', (req: Request, res: Response) => {
   const clientId = process.env.GOOGLE_CLIENT_ID || process.env.CLIENT_ID || process.env.VITE_GOOGLE_CLIENT_ID;
-  const appUrl = process.env.APP_URL || `${req.protocol}://${req.get('host')}`;
+  const appUrl = getAppUrl(req);
   const redirectUri = `${appUrl}/auth/callback`;
 
   if (!clientId) {
@@ -246,7 +262,7 @@ app.get(
     const queryError = req.query.error;
     const clientId = process.env.GOOGLE_CLIENT_ID || process.env.CLIENT_ID || process.env.VITE_GOOGLE_CLIENT_ID;
     const clientSecret = process.env.GOOGLE_CLIENT_SECRET || process.env.CLIENT_SECRET;
-    const appUrl = process.env.APP_URL || `${req.protocol}://${req.get('host')}`;
+    const appUrl = getAppUrl(req);
     const redirectUri = `${appUrl}/auth/callback`;
 
     let userEmail = '';
@@ -847,8 +863,8 @@ app.post('/api/cv/analyze-produce', async (req: Request, res: Response) => {
   }
 });
 
-// Start Server with Vite Integration
-async function startServer() {
+// Start Server with Vite Integration (in standalone/dev container mode)
+export async function startServer() {
   if (process.env.NODE_ENV !== 'production') {
     const vite = await createViteServer({
       server: { middlewareMode: true },
@@ -869,3 +885,5 @@ async function startServer() {
 }
 
 startServer();
+
+export default app;

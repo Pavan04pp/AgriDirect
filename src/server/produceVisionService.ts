@@ -1,10 +1,28 @@
 import { GoogleGenAI, Type } from '@google/genai';
 import { QualityAssessment, ProducePrediction } from '../types';
 
+function getGeminiApiKey(): string | undefined {
+  return (
+    process.env.GEMINI_API_KEY ||
+    process.env.GOOGLE_API_KEY ||
+    process.env.VITE_GEMINI_API_KEY ||
+    process.env.GOOGLE_GENAI_API_KEY
+  );
+}
+
+function getHuggingFaceApiKey(): string | undefined {
+  return (
+    process.env.HUGGINGFACE_API_KEY ||
+    process.env.VITE_HUGGINGFACE_API_KEY ||
+    process.env.HF_TOKEN ||
+    process.env.HF_API_KEY
+  );
+}
+
 let genAIClient: GoogleGenAI | null = null;
 
 function getGenAI(): GoogleGenAI | null {
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey = getGeminiApiKey();
   if (!apiKey) return null;
   if (!genAIClient) {
     genAIClient = new GoogleGenAI({
@@ -293,7 +311,7 @@ async function analyzeWithHuggingFace(
   farmerId: string,
   imageRef: string
 ): Promise<QualityAssessment> {
-  const hfKey = process.env.HUGGINGFACE_API_KEY;
+  const hfKey = getHuggingFaceApiKey();
   const headers: Record<string, string> = {
     'Content-Type': parsed.mimeType,
   };
@@ -463,8 +481,8 @@ export async function analyzeProduceProduceVision(
   const { image, farmerId = 'farmer-1', preferredModel = 'auto', commodityHint } = options;
   const parsed = await parseImageData(image);
 
-  const hasGemini = Boolean(process.env.GEMINI_API_KEY);
-  const hasHuggingFace = Boolean(process.env.HUGGINGFACE_API_KEY);
+  const hasGemini = Boolean(getGeminiApiKey());
+  const hasHuggingFace = Boolean(getHuggingFaceApiKey());
 
   // 1. If user preferred Gemini or auto and Gemini is available
   if ((preferredModel === 'gemini' || preferredModel === 'auto') && hasGemini) {
@@ -524,12 +542,14 @@ export async function analyzeProduceProduceVision(
 }
 
 export function getVisionModelStatus() {
+  const geminiKey = getGeminiApiKey();
+  const hfKey = getHuggingFaceApiKey();
   return {
-    gemini_available: Boolean(process.env.GEMINI_API_KEY),
-    huggingface_available: Boolean(process.env.HUGGINGFACE_API_KEY),
-    default_model: process.env.GEMINI_API_KEY
+    gemini_available: Boolean(geminiKey),
+    huggingface_available: Boolean(hfKey),
+    default_model: geminiKey
       ? 'Gemini Multimodal Vision AI'
-      : process.env.HUGGINGFACE_API_KEY
+      : hfKey
       ? 'Hugging Face ViT'
       : 'Gemini Vision AI (API Key Configured)',
   };

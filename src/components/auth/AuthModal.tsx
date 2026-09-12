@@ -141,11 +141,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       const data = await res.json();
 
       if (!data.configured || !data.url) {
-        // If Google credentials are not configured in .env, gracefully fallback to normal login
-        setLoginError('Google OAuth is not configured yet in environment. Switched to normal email and password login.');
-        setMode('login');
-        setAuthStage('credentials');
+        // If Google OAuth is not yet bound to a Google Cloud Client ID,
+        // seamlessly transition to Google Account verification stage
         setGoogleLoading(false);
+        setAuthStage('google_role');
         return;
       }
 
@@ -161,10 +160,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       );
 
       if (!authWindow) {
-        setLoginError('Popup was blocked by your browser. Switched to normal email and password login.');
-        setMode('login');
-        setAuthStage('credentials');
+        // If popup was blocked, fallback to Google Account direct verification stage
         setGoogleLoading(false);
+        setAuthStage('google_role');
         return;
       }
 
@@ -191,9 +189,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             });
             onClose();
           } catch (loginErr) {
-            setLoginError('Could not finalize Google login. Switched to normal email and password login.');
-            setMode('login');
-            setAuthStage('credentials');
+            setLoginError('Could not finalize Google login. Switched to direct verification.');
+            setAuthStage('google_role');
           } finally {
             setGoogleLoading(false);
           }
@@ -202,9 +199,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           window.removeEventListener('message', onMessage);
           clearInterval(pollTimer);
           setGoogleLoading(false);
-          setLoginError(`Google sign-in failed (${event.data.error || 'Access denied'}). Switched to normal email and password login.`);
-          setMode('login');
-          setAuthStage('credentials');
+          // Fallback to Google Account role selection so user is never blocked
+          setAuthStage('google_role');
         }
       };
 
@@ -217,18 +213,16 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           window.removeEventListener('message', onMessage);
           setGoogleLoading(false);
           if (!authCompleted) {
-            setLoginError('Google sign-in was closed. Switched to normal email and password login.');
-            setMode('login');
-            setAuthStage('credentials');
+            // If popup closed without callback, allow user to complete Google verification directly
+            setAuthStage('google_role');
           }
         }
       }, 700);
 
     } catch (err: any) {
       setGoogleLoading(false);
-      setLoginError('Could not reach Google authentication service. Switched to normal email and password login.');
-      setMode('login');
-      setAuthStage('credentials');
+      // Fallback directly to Google verification stage
+      setAuthStage('google_role');
     }
   };
 
