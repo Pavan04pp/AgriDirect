@@ -437,20 +437,20 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             </div>
 
             <div className="mt-6 pt-4 border-t border-[#2F5233]/20 flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => onOpenAuth('signup', 'farmer')}
-                className="clay-button-primary flex-1 py-2.5 text-xs font-bold cursor-pointer rounded-[14px]"
-              >
-                Join as Farmer
-              </button>
-              <button
-                type="button"
-                onClick={() => onOpenAuth('login', 'farmer')}
-                className="clay-button-secondary px-3.5 py-2.5 text-xs font-bold cursor-pointer rounded-[14px]"
-              >
-                Sign In
-              </button>
+              {isAuthenticated ? (
+                <button type="button" onClick={onNavigateToApp} className="clay-button-primary w-full py-2.5 text-xs font-bold cursor-pointer rounded-[14px]">
+                  Open my operations desk
+                </button>
+              ) : (
+                <>
+                  <button type="button" onClick={() => onOpenAuth('signup', 'farmer')} className="clay-button-primary flex-1 py-2.5 text-xs font-bold cursor-pointer rounded-[14px]">
+                    Join as Farmer
+                  </button>
+                  <button type="button" onClick={() => onOpenAuth('login', 'farmer')} className="clay-button-secondary px-3.5 py-2.5 text-xs font-bold cursor-pointer rounded-[14px]">
+                    Sign In
+                  </button>
+                </>
+              )}
             </div>
           </div>
 
@@ -483,20 +483,20 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             </div>
 
             <div className="mt-6 pt-4 border-t border-[#C77B2E]/20 flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => onOpenAuth('signup', 'buyer')}
-                className="clay-button-accent flex-1 py-2.5 text-xs font-bold cursor-pointer rounded-[14px]"
-              >
-                Register as Buyer
-              </button>
-              <button
-                type="button"
-                onClick={() => onOpenAuth('login', 'buyer')}
-                className="clay-button-secondary px-3.5 py-2.5 text-xs font-bold cursor-pointer rounded-[14px]"
-              >
-                Sign In
-              </button>
+              {isAuthenticated ? (
+                <button type="button" onClick={onNavigateToApp} className="clay-button-accent w-full py-2.5 text-xs font-bold cursor-pointer rounded-[14px]">
+                  Open my operations desk
+                </button>
+              ) : (
+                <>
+                  <button type="button" onClick={() => onOpenAuth('signup', 'buyer')} className="clay-button-accent flex-1 py-2.5 text-xs font-bold cursor-pointer rounded-[14px]">
+                    Register as Buyer
+                  </button>
+                  <button type="button" onClick={() => onOpenAuth('login', 'buyer')} className="clay-button-secondary px-3.5 py-2.5 text-xs font-bold cursor-pointer rounded-[14px]">
+                    Sign In
+                  </button>
+                </>
+              )}
             </div>
           </div>
 
@@ -529,20 +529,20 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             </div>
 
             <div className="mt-6 pt-4 border-t border-[#3B6FA0]/20 flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => onOpenAuth('signup', 'logistics')}
-                className="clay-button-secondary !bg-[#3B6FA0] !text-white flex-1 py-2.5 text-xs font-bold cursor-pointer rounded-[14px]"
-              >
-                Onboard Fleet
-              </button>
-              <button
-                type="button"
-                onClick={() => onOpenAuth('login', 'logistics')}
-                className="clay-button-secondary px-3.5 py-2.5 text-xs font-bold cursor-pointer rounded-[14px]"
-              >
-                Sign In
-              </button>
+              {isAuthenticated ? (
+                <button type="button" onClick={onNavigateToApp} className="clay-button-secondary !bg-[#3B6FA0] !text-white w-full py-2.5 text-xs font-bold cursor-pointer rounded-[14px]">
+                  Open my operations desk
+                </button>
+              ) : (
+                <>
+                  <button type="button" onClick={() => onOpenAuth('signup', 'logistics')} className="clay-button-secondary !bg-[#3B6FA0] !text-white flex-1 py-2.5 text-xs font-bold cursor-pointer rounded-[14px]">
+                    Onboard Fleet
+                  </button>
+                  <button type="button" onClick={() => onOpenAuth('login', 'logistics')} className="clay-button-secondary px-3.5 py-2.5 text-xs font-bold cursor-pointer rounded-[14px]">
+                    Sign In
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -606,10 +606,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 
               <button
                 type="button"
-                onClick={() => onOpenAuth('login', 'farmer')}
+                onClick={isAuthenticated ? onNavigateToApp : () => onOpenAuth('login', 'farmer')}
                 className="clay-button-secondary w-full mt-2 py-2 text-xs font-bold text-[#2F5233] flex items-center justify-center gap-1 cursor-pointer rounded-[14px]"
               >
-                <span>Sign In to Respond &rarr;</span>
+                <span>{isAuthenticated ? 'Open my desk to respond' : 'Sign in to respond'} &rarr;</span>
               </button>
             </div>
           ))}
