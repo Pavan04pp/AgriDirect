@@ -40,14 +40,7 @@ interface AppContextType {
   setIsAuthenticated: (val: boolean) => void;
   signupUser: (user: User, details?: any) => void;
   loginUser: (role: UserRole) => void;
-  loginWithGoogle: (googleData: {
-    email: string;
-    name?: string;
-    avatar_url?: string;
-    role?: UserRole;
-    organization?: string;
-    location?: string;
-  }) => Promise<User>;
+  loginWithCredentials: (identifier: string, role: UserRole) => Promise<User>;
   logoutUser: () => void;
 
   // Current user / role
@@ -205,34 +198,26 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     } catch {}
   };
 
-  const loginWithGoogle = async (googleData: {
-    email: string;
-    name?: string;
-    avatar_url?: string;
-    role?: UserRole;
-    organization?: string;
-    location?: string;
-  }): Promise<User> => {
+  const loginWithCredentials = async (identifier: string, role: UserRole): Promise<User> => {
     try {
-      const res = await fetch('/api/auth/google', {
+      const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(googleData),
+        body: JSON.stringify({ identifier, role }),
       });
       if (res.ok) {
         const data = await res.json();
         if (data.user) {
-          setUsers((prev) => (prev.some((u) => u.id === data.user.id) ? prev : [data.user, ...prev]));
-          setCurrentUser(data.user);
-          setIsAuthenticated(true);
+          setUsers((prev) => [data.user, ...prev.filter((u) => u.id !== data.user.id)]);
           return data.user;
         }
       }
+      const data = await res.json().catch(() => ({}));
+      throw new Error(data.error || 'No matching account was found for this role.');
     } catch (err) {
-      console.warn('Backend /api/auth/google request failed:', err);
+      if (err instanceof Error) throw err;
+      throw new Error('Manual login could not reach the account database.');
     }
-
-    throw new Error('Google authentication could not be completed. Please check the OAuth configuration and try again.');
   };
 
   const signupUser = (newUser: User, details?: any) => {
@@ -1019,7 +1004,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setIsAuthenticated,
         signupUser,
         loginUser,
-        loginWithGoogle,
+        loginWithCredentials,
         logoutUser,
         currentUser,
         setCurrentUser,

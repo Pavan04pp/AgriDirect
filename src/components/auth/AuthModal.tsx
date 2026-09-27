@@ -44,20 +44,15 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     setCurrentUser,
     setIsAuthenticated,
     signupUser,
-    loginWithGoogle,
+    loginWithCredentials,
     language
   } = useApp();
 
   const [mode, setMode] = useState<'login' | 'signup'>(initialMode);
   const [selectedRole, setSelectedRole] = useState<UserRole>(initialRole);
 
-  // Security Stage: 'credentials' | 'two_factor' | 'biometric_scan' | 'google_role'
-  const [authStage, setAuthStage] = useState<'credentials' | 'two_factor' | 'biometric_scan' | 'google_role'>('credentials');
-
-  // Google Login State
-  const [googleEmail, setGoogleEmail] = useState('prempavan81@gmail.com');
-  const [googleName, setGoogleName] = useState('Pavan Prem');
-  const [googleLoading, setGoogleLoading] = useState(false);
+  // Security Stage: credentials, two-factor verification, or biometric scan.
+  const [authStage, setAuthStage] = useState<'credentials' | 'two_factor' | 'biometric_scan'>('credentials');
 
   // Login Form
   const [loginIdentifier, setLoginIdentifier] = useState('');
@@ -142,124 +137,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
   const currentStrength = evaluatePasswordStrength(mode === 'login' ? loginPassword : signupPassword);
 
-  const handleGoogleInitiate = async () => {
-    setGoogleLoading(true);
-    setLoginError('');
-
-    try {
-      const res = await fetch('/api/auth/google/url');
-      const data = await res.json();
-
-      if (!data.configured || !data.url) {
-        setGoogleLoading(false);
-        setLoginError(`Google OAuth is not configured on this deployment. Add GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in Vercel, then redeploy. Callback: ${data.redirect_uri || '/auth/callback'}`);
-        return;
-      }
-
-      // Open Google popup window centered on screen
-      const popupWidth = 520;
-      const popupHeight = 640;
-      const left = window.screenX + (window.outerWidth - popupWidth) / 2;
-      const top = window.screenY + (window.outerHeight - popupHeight) / 2;
-      const authWindow = window.open(
-        data.url,
-        'google_oauth_popup',
-        `width=${popupWidth},height=${popupHeight},left=${left},top=${top},status=no,resizable=yes`
-      );
-
-      if (!authWindow) {
-        setGoogleLoading(false);
-        setLoginError('Google sign-in popup was blocked. Allow popups for this site and try again.');
-        return;
-      }
-
-      let authCompleted = false;
-
-      const onMessage = async (event: MessageEvent) => {
-        if (event.data?.type === 'OAUTH_AUTH_SUCCESS' && event.data?.provider === 'google') {
-          authCompleted = true;
-          window.removeEventListener('message', onMessage);
-          clearInterval(pollTimer);
-
-          const extractedEmail = event.data.email || '';
-          const extractedName = event.data.name || (extractedEmail ? extractedEmail.split('@')[0] : 'Google User');
-          const avatarUrl = event.data.avatar_url;
-
-          try {
-            // Extract name of Google account and email ID. That's it, no password!
-            await loginWithGoogle({
-              email: extractedEmail,
-              name: extractedName,
-              avatar_url: avatarUrl,
-              role: selectedRole,
-              organization: `${extractedName}'s ${selectedRole === 'buyer' ? 'Kitchen' : selectedRole === 'farmer' ? 'FPO' : 'Transport'}`,
-            });
-            onClose();
-          } catch (loginErr) {
-            setLoginError(loginErr instanceof Error ? loginErr.message : 'Could not finalize Google login.');
-          } finally {
-            setGoogleLoading(false);
-          }
-        } else if (event.data?.type === 'OAUTH_AUTH_FAILURE' && event.data?.provider === 'google') {
-          authCompleted = true;
-          window.removeEventListener('message', onMessage);
-          clearInterval(pollTimer);
-          setGoogleLoading(false);
-          setLoginError(event.data.error || 'Google authentication was not completed.');
-        }
-      };
-
-      window.addEventListener('message', onMessage);
-
-      // Check if popup closed by user before finishing
-      const pollTimer = setInterval(() => {
-        if (authWindow.closed) {
-          clearInterval(pollTimer);
-          window.removeEventListener('message', onMessage);
-          setGoogleLoading(false);
-          if (!authCompleted) {
-            setLoginError('Google sign-in was cancelled before verification completed.');
-          }
-        }
-      }, 700);
-
-    } catch (err: any) {
-      setGoogleLoading(false);
-      setLoginError(err?.message || 'Could not connect to the Google authentication service.');
-    }
-  };
-
-  const handleCompleteGoogleLogin = async () => {
-    setGoogleLoading(true);
-    try {
-      await loginWithGoogle({
-        email: googleEmail.trim() || 'prempavan81@gmail.com',
-        name: googleName.trim() || 'Pavan Prem',
-        role: selectedRole,
-        organization: organizationName.trim() || (selectedRole === 'buyer' ? 'GreenLeaf Procurement' : selectedRole === 'farmer' ? 'Karnataka Farmer Hub' : 'Express Cargo'),
-      });
-      setSignupSuccessMsg(`Signed in with Google as ${selectedRole.toUpperCase()}!`);
-      setTimeout(() => {
-        onClose();
-      }, 500);
-    } catch {
-      setLoginError('Failed to sign in with Google. Please retry.');
-    } finally {
-      setGoogleLoading(false);
-    }
-  };
-
-  const handleQuickLogin = (role: UserRole) => {
-    const user = users.find((u) => u.role === role);
-    if (user) {
-      setCurrentUser(user);
-      setIsAuthenticated(true);
-      onClose();
-    }
-  };
-
   // Secure Login Verification Step
-  const handleLoginSubmit = (e: React.FormEvent) => {
+  const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoginError('');
 
@@ -284,15 +163,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       return;
     }
 
-    const matchedUser = users.find(
-      (u) =>
-        u.role === selectedRole &&
-        (u.email.toLowerCase() === loginIdentifier.trim().toLowerCase() ||
-          u.phone.includes(loginIdentifier) ||
-          u.name.toLowerCase() === loginIdentifier.trim().toLowerCase())
-    );
-
-    if (matchedUser) {
+    try {
+      const matchedUser = await loginWithCredentials(loginIdentifier.trim(), selectedRole);
       // Transition to Two-Factor Security Verification
       setPendingUser(matchedUser);
       setAuthStage('two_factor');
@@ -301,7 +173,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       setTimeout(() => {
         otpInputRefs.current[3]?.focus();
       }, 150);
-    } else {
+    } catch (error) {
       const nextAttempts = failedAttempts + 1;
       setFailedAttempts(nextAttempts);
       if (nextAttempts >= 4) {
@@ -309,7 +181,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         setLockoutTimer(30);
         setLoginError('Too many failed security attempts. Account locked for 30 seconds.');
       } else {
-        setLoginError(`Invalid credentials. ${4 - nextAttempts} attempts remaining before security lockout.`);
+        setLoginError(error instanceof Error ? error.message : `Invalid credentials. ${4 - nextAttempts} attempts remaining before security lockout.`);
       }
     }
   };
@@ -597,33 +469,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           {/* STAGE 1: CREDENTIALS (LOGIN / SIGNUP) */}
           {authStage === 'credentials' && (
             <>
-              {/* Google OAuth Quick Sign-In */}
-              <div className="mb-4">
-                <button
-                  type="button"
-                  onClick={handleGoogleInitiate}
-                  disabled={googleLoading}
-                  className="clay-button-secondary w-full h-12 flex items-center justify-center gap-3 cursor-pointer disabled:opacity-50 text-xs sm:text-sm font-bold"
-                >
-                  <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24">
-                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
-                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
-                  </svg>
-                  <span>{googleLoading ? 'Connecting Google Account...' : 'Continue with Google Workspace'}</span>
-                </button>
-
-                <div className="relative my-4 text-center">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-[#DDD9CD]" />
-                  </div>
-                  <span className="relative bg-[#FFFFFF] px-3 text-[11px] font-bold text-[#5B6660] uppercase tracking-wider">
-                    Or with High-Security Credentials
-                  </span>
-                </div>
-              </div>
-
               {mode === 'login' ? (
                 /* SECURE LOGIN FORM */
                 <form onSubmit={handleLoginSubmit} className="space-y-4">
@@ -730,62 +575,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     <span>Proceed to 2-Factor Clearance &rarr;</span>
                   </button>
 
-                  {/* 1-Click Fast Portfolio Role Switcher */}
-                  <div className="pt-4 border-t border-[#DDD9CD]/70">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-[11px] font-extrabold text-[#5B6660] uppercase tracking-wider flex items-center gap-1.5">
-                        <Sparkles size={13} className="text-[#C77B2E]" />
-                        Instant Verified Access (1-Click)
-                      </span>
-                      <span className="text-[10px] text-[#2F5233] font-bold bg-[#EAF0E7] px-2 py-0.5 rounded-full">
-                        Demo Ready
-                      </span>
-                    </div>
-
-                    <div className="space-y-2">
-                      <button
-                        type="button"
-                        onClick={() => handleQuickLogin('buyer')}
-                        className="clay-card-interactive w-full p-2.5 rounded-[14px] bg-[#FAF9F5] flex items-center justify-between text-left text-xs transition-all border border-[#DDD9CD]/50"
-                      >
-                        <span className="flex items-center gap-2.5">
-                          <div className="w-6 h-6 rounded-[8px] bg-[#FDF3E7] text-[#C77B2E] flex items-center justify-center font-bold">
-                            <Building2 size={13} />
-                          </div>
-                          <span><strong>Chef Arvind</strong> (GreenLeaf Cloud Kitchens • Buyer)</span>
-                        </span>
-                        <span className="text-[10px] text-[#2F5233] font-bold">Launch &rarr;</span>
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => handleQuickLogin('farmer')}
-                        className="clay-card-interactive w-full p-2.5 rounded-[14px] bg-[#FAF9F5] flex items-center justify-between text-left text-xs transition-all border border-[#DDD9CD]/50"
-                      >
-                        <span className="flex items-center gap-2.5">
-                          <div className="w-6 h-6 rounded-[8px] bg-[#EAF0E7] text-[#2F5233] flex items-center justify-center font-bold">
-                            <Tractor size={13} />
-                          </div>
-                          <span><strong>Ramesh Gowda</strong> (Hosakote FPO • Farmer)</span>
-                        </span>
-                        <span className="text-[10px] text-[#2F5233] font-bold">Launch &rarr;</span>
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => handleQuickLogin('logistics')}
-                        className="clay-card-interactive w-full p-2.5 rounded-[14px] bg-[#FAF9F5] flex items-center justify-between text-left text-xs transition-all border border-[#DDD9CD]/50"
-                      >
-                        <span className="flex items-center gap-2.5">
-                          <div className="w-6 h-6 rounded-[8px] bg-[#EBF3FA] text-[#3B6FA0] flex items-center justify-center font-bold">
-                            <Truck size={13} />
-                          </div>
-                          <span><strong>Kisan Express</strong> (Eicher 14ft Consolidated Fleet)</span>
-                        </span>
-                        <span className="text-[10px] text-[#2F5233] font-bold">Launch &rarr;</span>
-                      </button>
-                    </div>
-                  </div>
                 </form>
               ) : (
                 /* HIGH-SECURITY SIGNUP FORM */
@@ -1116,108 +905,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             </div>
           )}
 
-          {/* STAGE 4: GOOGLE ROLE CONFIRMATION */}
-          {authStage === 'google_role' && (
-            <div className="space-y-4 py-1">
-              <div className="clay-card-sage p-4 text-left">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 rounded-full bg-white border border-[#DDD9CD] flex items-center justify-center shadow-xs">
-                    <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24">
-                      <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-                      <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-                      <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
-                      <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 className="text-xs font-bold text-[#1C2321]">Google Workspace Verified</h3>
-                    <p className="text-[11px] text-[#5B6660]">Single Sign-On authentication for Agridirect</p>
-                  </div>
-                </div>
-
-                <div className="space-y-2.5">
-                  <div>
-                    <label className="block text-[11px] font-bold text-[#5B6660] mb-1">
-                      Authenticated Email
-                    </label>
-                    <input
-                      type="email"
-                      value={googleEmail}
-                      onChange={(e) => setGoogleEmail(e.target.value)}
-                      className="clay-input w-full h-10 px-3 text-xs text-[#1C2321] font-semibold"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-[11px] font-bold text-[#5B6660] mb-1">
-                      Account Full Name
-                    </label>
-                    <input
-                      type="text"
-                      value={googleName}
-                      onChange={(e) => setGoogleName(e.target.value)}
-                      className="clay-input w-full h-10 px-3 text-xs text-[#1C2321] font-semibold"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-[#1C2321] mb-1.5">
-                  Confirm Account Desk:
-                </label>
-                <div className="grid grid-cols-3 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setSelectedRole('farmer')}
-                    className={`p-2.5 rounded-[12px] text-xs font-bold transition-all ${
-                      selectedRole === 'farmer' ? 'clay-card-sage border border-[#2F5233] text-[#2F5233]' : 'clay-card bg-white text-[#5B6660]'
-                    }`}
-                  >
-                    🌾 Farmer
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setSelectedRole('buyer')}
-                    className={`p-2.5 rounded-[12px] text-xs font-bold transition-all ${
-                      selectedRole === 'buyer' ? 'clay-card-terracotta border border-[#C77B2E] text-[#C77B2E]' : 'clay-card bg-white text-[#5B6660]'
-                    }`}
-                  >
-                    🏢 Buyer
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setSelectedRole('logistics')}
-                    className={`p-2.5 rounded-[12px] text-xs font-bold transition-all ${
-                      selectedRole === 'logistics' ? 'clay-card bg-[#EBF3FA] border border-[#3B6FA0] text-[#3B6FA0]' : 'clay-card bg-white text-[#5B6660]'
-                    }`}
-                  >
-                    🚚 Logistics
-                  </button>
-                </div>
-              </div>
-
-              <div className="space-y-2 pt-2">
-                <button
-                  type="button"
-                  onClick={handleCompleteGoogleLogin}
-                  disabled={googleLoading}
-                  className="clay-button-primary w-full h-12 flex items-center justify-center gap-2 cursor-pointer text-xs sm:text-sm font-bold"
-                >
-                  <CheckCircle2 size={16} />
-                  <span>Enter Agridirect as {selectedRole.toUpperCase()}</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setAuthStage('credentials')}
-                  className="w-full py-2 text-xs text-[#5B6660] hover:text-[#1C2321] font-semibold cursor-pointer"
-                >
-                  &larr; Back to Email/Password
-                </button>
-              </div>
-            </div>
-          )}
         </div>
 
         {/* Security Trust Footer */}

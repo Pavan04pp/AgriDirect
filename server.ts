@@ -463,13 +463,18 @@ app.post('/api/auth/google', (req: Request, res: Response) => {
 
 // Standard Login Endpoint
 app.post('/api/auth/login', (req: Request, res: Response) => {
-  const { email, role } = req.body;
+  const { identifier, email, role } = req.body;
 
   let matchedUser: UserRecord | undefined;
-  if (email) {
-    matchedUser = users.find((u) => u.email.toLowerCase() === email.toLowerCase());
-  } else if (role) {
-    matchedUser = users.find((u) => u.role === role);
+  const normalizedIdentifier = String(identifier || email || '').trim().toLowerCase();
+  if (normalizedIdentifier && role) {
+    matchedUser = users.find((u) => {
+      const matchesIdentifier =
+        u.email.toLowerCase() === normalizedIdentifier ||
+        u.name.toLowerCase() === normalizedIdentifier ||
+        u.phone.replace(/\s+/g, '') === normalizedIdentifier.replace(/\s+/g, '');
+      return matchesIdentifier && u.role === role;
+    });
   }
 
   if (!matchedUser) {
