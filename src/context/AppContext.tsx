@@ -179,10 +179,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [isAuthenticated, setIsAuthenticatedState] = useState<boolean>(() => {
     try {
       const saved = localStorage.getItem('krishi_auth');
-      if (saved === 'false') return false;
-      return true; // Default to authenticated for instant portfolio testability
+      return saved === 'true';
     } catch {
-      return true;
+      return false;
     }
   });
 
@@ -230,22 +229,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         }
       }
     } catch (err) {
-      console.warn('Backend /api/auth/google call fallback to client:', err);
+      console.warn('Backend /api/auth/google request failed:', err);
     }
 
-    const assignedRole = googleData.role || 'buyer';
-    const fallbackUser: User = {
-      id: `google_${Date.now()}`,
-      name: googleData.name || 'Google User',
-      email: googleData.email,
-      phone: '+91 98000 00000',
-      role: assignedRole,
-      location: googleData.location || (assignedRole === 'farmer' ? 'Hosakote, Bengaluru Rural' : 'Bengaluru Urban'),
-      verification_status: 'verified',
-      created_at: new Date().toISOString(),
-    };
-    signupUser(fallbackUser, { organization_name: googleData.organization, role: assignedRole });
-    return fallbackUser;
+    throw new Error('Google authentication could not be completed. Please check the OAuth configuration and try again.');
   };
 
   const signupUser = (newUser: User, details?: any) => {

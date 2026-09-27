@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap');
 @import "tailwindcss";
 
 :root {
@@ -27,7 +28,7 @@
 body {
   background-color: #F6F5F0;
   color: var(--color-ink);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-image: 
@@ -39,7 +40,28 @@ body {
 }
 
 .font-display {
-  font-family: 'Manrope', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: 'Space Grotesk', 'DM Sans', sans-serif;
+}
+
+.font-mono {
+  font-family: 'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+@keyframes agri-rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+#landing-page > * {
+  animation: agri-rise 0.7s ease both;
+}
+
+#landing-page > *:nth-child(2) { animation-delay: 80ms; }
+#landing-page > *:nth-child(3) { animation-delay: 160ms; }
+#landing-page > *:nth-child(4) { animation-delay: 240ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  #landing-page > * { animation: none; }
 }
 
 /* =========================================================================

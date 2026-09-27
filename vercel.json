@@ -4,11 +4,11 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "/api"
+      "destination": "/api/index"
     },
     {
       "source": "/auth/callback",
-      "destination": "/api"
+      "destination": "/api/index"
     },
     {
       "source": "/((?!api/|auth/callback).*)",

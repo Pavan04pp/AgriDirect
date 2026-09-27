@@ -14,7 +14,7 @@ import { UserRole } from './types';
 
 const MainAppContent: React.FC = () => {
   const { currentUser, isAuthenticated } = useApp();
-  const [currentTab, setCurrentTab] = useState<'dashboard' | 'app' | 'how-it-works' | 'landing'>('dashboard');
+  const [currentTab, setCurrentTab] = useState<'dashboard' | 'app' | 'how-it-works' | 'landing'>('landing');
 
   // Auth modal state
   const [authModalOpen, setAuthModalOpen] = useState(false);
@@ -34,6 +34,10 @@ const MainAppContent: React.FC = () => {
   const handleNavigateToRole = (role: UserRole) => {
     if (!isAuthenticated) {
       handleOpenAuth('signup', role);
+      return;
+    }
+    if (currentUser.role !== role) {
+      setCurrentTab('app');
       return;
     }
     setCurrentTab('app');
@@ -96,7 +100,7 @@ const MainAppContent: React.FC = () => {
           </div>
         )}
 
-        {currentTab === 'app' && (
+        {currentTab === 'app' && isAuthenticated && (
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full animate-in fade-in duration-200">
             {renderActiveRoleView()}
           </div>

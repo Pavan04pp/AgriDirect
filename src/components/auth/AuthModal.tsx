@@ -89,6 +89,15 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   // Pending Authenticated User for 2FA Clearance
   const [pendingUser, setPendingUser] = useState<User | null>(null);
 
+  useEffect(() => {
+    if (!isOpen) return;
+    setMode(initialMode);
+    setSelectedRole(initialRole);
+    setAuthStage('credentials');
+    setLoginError('');
+    setSignupSuccessMsg('');
+  }, [isOpen, initialMode, initialRole]);
+
   // Countdown timer for Lockout
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -141,10 +150,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       const data = await res.json();
 
       if (!data.configured || !data.url) {
-        // If Google OAuth is not yet bound to a Google Cloud Client ID,
-        // seamlessly transition to Google Account verification stage
         setGoogleLoading(false);
-        setAuthStage('google_role');
+        setLoginError(`Google OAuth is not configured on this deployment. Add GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in Vercel, then redeploy. Callback: ${data.redirect_uri || '/auth/callback'}`);
         return;
       }
 
@@ -160,9 +167,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       );
 
       if (!authWindow) {
-        // If popup was blocked, fallback to Google Account direct verification stage
         setGoogleLoading(false);
-        setAuthStage('google_role');
+        setLoginError('Google sign-in popup was blocked. Allow popups for this site and try again.');
         return;
       }
 
@@ -189,8 +195,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             });
             onClose();
           } catch (loginErr) {
-            setLoginError('Could not finalize Google login. Switched to direct verification.');
-            setAuthStage('google_role');
+            setLoginError(loginErr instanceof Error ? loginErr.message : 'Could not finalize Google login.');
           } finally {
             setGoogleLoading(false);
           }
@@ -199,8 +204,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           window.removeEventListener('message', onMessage);
           clearInterval(pollTimer);
           setGoogleLoading(false);
-          // Fallback to Google Account role selection so user is never blocked
-          setAuthStage('google_role');
+          setLoginError(event.data.error || 'Google authentication was not completed.');
         }
       };
 
@@ -213,16 +217,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           window.removeEventListener('message', onMessage);
           setGoogleLoading(false);
           if (!authCompleted) {
-            // If popup closed without callback, allow user to complete Google verification directly
-            setAuthStage('google_role');
+            setLoginError('Google sign-in was cancelled before verification completed.');
           }
         }
       }, 700);
 
     } catch (err: any) {
       setGoogleLoading(false);
-      // Fallback directly to Google verification stage
-      setAuthStage('google_role');
+      setLoginError(err?.message || 'Could not connect to the Google authentication service.');
     }
   };
 
@@ -284,11 +286,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     const matchedUser = users.find(
       (u) =>
         u.role === selectedRole &&
-        (loginIdentifier.trim() === '' ||
-          u.email.toLowerCase().includes(loginIdentifier.toLowerCase()) ||
+        (u.email.toLowerCase() === loginIdentifier.trim().toLowerCase() ||
           u.phone.includes(loginIdentifier) ||
-          u.name.toLowerCase().includes(loginIdentifier.toLowerCase()))
-    ) || users.find((u) => u.role === selectedRole) || users[0];
+          u.name.toLowerCase() === loginIdentifier.trim().toLowerCase())
+    );
 
     if (matchedUser) {
       // Transition to Two-Factor Security Verification

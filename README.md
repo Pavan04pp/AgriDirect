@@ -1,4 +1,6 @@
-# 🌱 Agridirect — Direct Agricultural Clearing & Cold-Chain Logistics Network
+# AGRIDIRECT
+
+### Demand-led procurement for the people who grow, buy, and move food.
 
 <div align="center">
 
@@ -11,15 +13,15 @@
 [![Recharts](https://img.shields.io/badge/Recharts-3.1-22c55e?style=for-the-badge&logo=chartdotjs&logoColor=white)](https://recharts.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
-**A high-performance, demand-first B2B agricultural clearinghouse connecting commercial institutional buyers, smallholder farmgate clusters, and consolidated cold-chain freight.**
+**Agridirect is a demand-first B2B agricultural clearinghouse connecting commercial buyers, smallholder farmgate clusters, and consolidated cold-chain freight.** It turns a fragmented supply chain into one visible operating system: buyers publish what they need, farmers respond to a real price, and logistics teams move a verified load with less waste.
 
-[Explore Live Demo](#-2-minute-recruiter-quick-tour) • [Why This Project Stands Out](#-why-this-project-stands-out-recruiter-tldr) • [Architecture](#-system-architecture--clearing-workflow) • [Key Engineering Highlights](#-key-engineering-highlights) • [Local Setup](#-getting-started)
+[Explore the product story](#-2-minute-recruiter-quick-tour) • [See the operating model](#-system-architecture--clearing-workflow) • [Read the engineering highlights](#-key-engineering-highlights)
 
 </div>
 
 ---
 
-## 🎯 Executive Summary
+## The Product In One View
 
 In traditional agricultural supply chains (especially in India and developing economies), **over 30% of perishable produce is lost post-harvest**, and smallholder farmers forfeit up to **40% of their margin to unorganized mandi brokers**. Farmers harvest speculatively with zero price certainty, while institutional buyers (hotels, supermarket chains, cloud kitchens) suffer from erratic supply quality and broken logistics.
 
@@ -241,53 +243,6 @@ Want to evaluate the core mechanics of the platform in under 2 minutes? Follow t
 ├── metadata.json                   # App manifest & permissions
 ├── package.json                    # Project dependencies & build scripts
 └── README.md                       # Documentation & recruiter guide
-```
-
----
-
-## 🚀 Getting Started
-
-### Prerequisites
-- **Node.js**: v18.0 or higher
-- **npm** or **yarn**
-
-### 1. Clone the Repository
-```bash
-git clone https://github.com/your-username/agridirect.git
-cd agridirect
-```
-
-### 2. Install Dependencies
-```bash
-npm install
-```
-
-### 3. Configure Environment Variables (Optional)
-Copy `.env.example` to `.env`:
-```bash
-cp .env.example .env
-```
-
-```env
-# Optional: Gemini API Key for server-side AI expansions
-GEMINI_API_KEY=""
-
-# Optional: Google OAuth 2.0 Credentials (fallback auth works out of the box)
-GOOGLE_CLIENT_ID="your-client-id.apps.googleusercontent.com"
-GOOGLE_CLIENT_SECRET="your-client-secret"
-APP_URL="http://localhost:3000"
-```
-
-### 4. Run Development Server
-```bash
-npm run dev
-```
-Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-### 5. Production Build & Start
-```bash
-npm run build
-npm start
 ```
 
 ---
