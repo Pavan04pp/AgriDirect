@@ -884,6 +884,9 @@ export async function startServer() {
   });
 }
 
-startServer();
+// Vercel imports the Express app as a serverless handler and manages the listener itself.
+if (!process.env.VERCEL && !process.env.AWS_LAMBDA_FUNCTION_NAME) {
+  startServer();
+}
 
 export default app;

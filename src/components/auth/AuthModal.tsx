@@ -40,6 +40,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 }) => {
   const {
     users,
+    isAuthenticated,
     setCurrentUser,
     setIsAuthenticated,
     signupUser,
@@ -119,7 +120,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     return () => clearTimeout(timer);
   }, [authStage, otpResendCountdown]);
 
-  if (!isOpen) return null;
+  if (!isOpen || isAuthenticated) return null;
 
   // Password Strength Evaluation
   const evaluatePasswordStrength = (pwd: string) => {
