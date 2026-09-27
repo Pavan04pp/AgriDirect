@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AppProvider, useApp } from './context/AppContext';
 import { Header } from './components/common/Header';
 import { BuyerDashboard } from './components/buyer/BuyerDashboard';
@@ -24,6 +24,12 @@ const MainAppContent: React.FC = () => {
   // Real-time market trends & ML crop suggestions modal state
   const [trendsModalOpen, setTrendsModalOpen] = useState(false);
   const [trendsModalTab, setTrendsModalTab] = useState<'trends' | 'ml_suggestions'>('trends');
+
+  useEffect(() => {
+    if (isAuthenticated && currentTab === 'landing') {
+      setCurrentTab('app');
+    }
+  }, [isAuthenticated, currentTab]);
 
   const handleOpenAuth = (mode: 'login' | 'signup', role?: UserRole) => {
     setAuthModalMode(mode);
