@@ -534,7 +534,7 @@ export const MarketTrendsModal: React.FC<MarketTrendsModalProps> = ({
                                     Mandi Spot Rate: <strong className="text-[#1C2321]">₹{data.spotPrice}/kg</strong>
                                   </div>
                                   <div className="text-[#2F5233] font-bold">
-                                    KrishiLink Direct: ₹{data.directPrice}/kg
+                                    Agridirect Direct: ₹{data.directPrice}/kg
                                   </div>
                                   <div className="text-[#C77B2E] font-bold">
                                     All-Time Peak Price: ₹{data.peakPrice}/kg

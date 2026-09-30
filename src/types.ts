@@ -312,7 +312,7 @@ export interface MarketTrendProduct {
   category: 'Vegetables' | 'Fruit Veg' | 'Greens' | 'Tubers' | 'Spices';
   currentDemandKg: number; // 0 for products with no demand
   tradeMarketSpotPrice: number; // ₹/kg in APMC Mandi
-  directContractPrice: number; // ₹/kg on KrishiLink
+  directContractPrice: number; // ₹/kg on Agridirect
   peakTimePrice: number; // ₹/kg highest peak time selling price
   sellingPointScore: number; // 0-100 indicating closeness to peak selling point
   isPeakSellingPoint: boolean;

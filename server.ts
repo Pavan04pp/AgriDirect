@@ -84,12 +84,12 @@ let users: UserRecord[] = [
     id: 'user_admin_1',
     name: 'Platform Operations Admin',
     phone: '+91 80 2345 6789',
-    email: 'admin@krishilink.internal',
+    email: 'admin@agridirect.internal',
     role: 'admin',
     location: 'Bengaluru Command Center',
     verification_status: 'verified',
     created_at: '2026-01-01T00:00:00Z',
-    organization: 'KrishiLink Agritech Network',
+    organization: 'Agridirect Agritech Network',
   },
 ];
 
@@ -207,7 +207,7 @@ const marketPrices = [
 app.get('/api/health', (req: Request, res: Response) => {
   res.json({
     status: 'ok',
-    service: 'KrishiLink Agritech Backend API',
+    service: 'Agridirect Agritech Backend API',
     uptime: process.uptime(),
     timestamp: new Date().toISOString(),
     users_count: users.length,
@@ -885,7 +885,7 @@ export async function startServer() {
   }
 
   app.listen(PORT, '0.0.0.0', () => {
-    console.log(`KrishiLink Full-Stack Server running on port ${PORT}`);
+    console.log(`Agridirect Full-Stack Server running on port ${PORT}`);
   });
 }
 
